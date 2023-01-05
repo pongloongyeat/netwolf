@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
+import 'package:netwolf/src/constants.dart';
 import 'package:netwolf/src/dialogs/dialogs.dart';
 import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/extensions.dart';
@@ -18,6 +19,7 @@ class NetwolfWidget extends StatelessWidget {
   const NetwolfWidget({
     super.key,
     this.enabled = kDebugMode,
+    this.enableLogging = kDebugMode,
     this.controller,
     this.child,
   });
@@ -30,6 +32,10 @@ class NetwolfWidget extends StatelessWidget {
   /// Enables/disables Netwolf. If disabled, this will not show the overlay
   /// even if [NetwolfController.show] is called
   final bool enabled;
+
+  /// Enables/disables Netwolf from logging requests. If disabled, this will
+  /// not log any requests, even if [enabled] is true.
+  final bool enableLogging;
 
   /// The controller associated with this widget. If specified, the widget
   /// uses the specified controller, otherwise, it uses
@@ -45,11 +51,7 @@ class NetwolfWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (enabled) {
-      _effectiveController._enable();
-    } else {
-      _effectiveController._disable();
-    }
+    _effectiveController.setLogging(enableLogging);
 
     return Portal(
       child: _NetwolfWidget(
@@ -102,17 +104,12 @@ class _NetwolfWidgetState extends State<_NetwolfWidget> {
   }
 
   void _setNetwolfState(bool show) {
-    if (!widget.enabled) return;
-
-    if (_shown != show) {
-      setState(() {
-        _shown = show;
-      });
-    }
+    if (_shown == show) return;
+    setState(() => _shown = show);
   }
 
   void showNetwolf() {
-    _setNetwolfState(true);
+    if (widget.enabled) _setNetwolfState(true);
   }
 
   void hideNetwolf() {

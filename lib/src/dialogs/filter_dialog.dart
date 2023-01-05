@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/constants.dart';
+import 'package:netwolf/src/dialogs/dialogs.dart';
 import 'package:netwolf/src/extensions.dart';
 import 'package:netwolf/src/widgets/widgets.dart';
 
@@ -36,68 +37,57 @@ class _FilterDialogState extends State<FilterDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Filter',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+    return BaseDialog(
+      title: 'Filter',
+      content: Column(
+        children: [
+          _SortingField<HttpRequestMethod>(
+            'By method',
+            value: _selectedRequestMethod,
+            items: HttpRequestMethod.values,
+            itemStringBuilder: (e) => e.name.toUpperCase(),
+            onChanged: (value) => setState(() {
+              _selectedRequestMethod = value;
+            }),
+          ),
+          _SortingField<HttpResponseStatus>(
+            'By status',
+            value: _selectedResponseStatus,
+            items: HttpResponseStatus.values,
+            itemStringBuilder: (e) => e.name.toTitleCase(),
+            onChanged: (value) => setState(() {
+              _selectedResponseStatus = value;
+            }),
+          ),
+        ],
+      ),
+      buttons: Row(
+        children: [
+          const Spacer(),
+          ElevatedButton(
+            style: (Theme.of(context).elevatedButtonTheme.style ??
+                    ElevatedButton.styleFrom())
+                .copyWith(
+              backgroundColor: MaterialStateProperty.all(kDestructiveColor),
             ),
-            const SizedBox(height: 16),
-            _SortingField<HttpRequestMethod>(
-              'By method',
-              value: _selectedRequestMethod,
-              items: HttpRequestMethod.values,
-              itemStringBuilder: (e) => e.name.toUpperCase(),
-              onChanged: (value) => setState(() {
-                _selectedRequestMethod = value;
-              }),
-            ),
-            _SortingField<HttpResponseStatus>(
-              'By status',
-              value: _selectedResponseStatus,
-              items: HttpResponseStatus.values,
-              itemStringBuilder: (e) => e.name.toTitleCase(),
-              onChanged: (value) => setState(() {
-                _selectedResponseStatus = value;
-              }),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Spacer(),
-                ElevatedButton(
-                  style: (Theme.of(context).elevatedButtonTheme.style ??
-                          ElevatedButton.styleFrom())
-                      .copyWith(
-                    backgroundColor:
-                        MaterialStateProperty.all(kDestructiveColor),
-                  ),
-                  onPressed: () {
-                    widget.onClearFiltersPressed();
-                    NetwolfRouter.of(context).dismiss();
-                  },
-                  child: const Text('Clear filters'),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    widget.onSorted(
-                      _selectedRequestMethod,
-                      _selectedResponseStatus,
-                    );
-                    NetwolfRouter.of(context).dismiss();
-                  },
-                  child: const Text('Apply'),
-                ),
-              ],
-            ),
-          ],
-        ),
+            onPressed: () {
+              widget.onClearFiltersPressed();
+              NetwolfRouter.of(context).dismiss();
+            },
+            child: const Text('Clear filters'),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () {
+              widget.onSorted(
+                _selectedRequestMethod,
+                _selectedResponseStatus,
+              );
+              NetwolfRouter.of(context).dismiss();
+            },
+            child: const Text('Apply'),
+          ),
+        ],
       ),
     );
   }
@@ -127,6 +117,7 @@ class _SortingField<T extends Object> extends StatelessWidget {
             label,
             overflow: TextOverflow.ellipsis,
             maxLines: 999,
+            style: kLabelTextStyle,
           ),
         ),
         const SizedBox(width: 16),

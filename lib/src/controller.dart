@@ -31,8 +31,8 @@ class NetwolfController {
 
   final responses = <NetwolfResponseWithRelativeTimestamp>[];
 
-  bool _enabled = true;
-  bool get enabled => _enabled;
+  bool _logging = true;
+  bool get logging => _logging;
 
   bool get _isSearching =>
       (_searchTerm ?? '').isNotEmpty ||
@@ -43,16 +43,15 @@ class NetwolfController {
   HttpRequestMethod? _filteredMethod;
   HttpResponseStatus? _filteredStatus;
 
-  void show() {
-    if (enabled) _widgetKey.currentState!.showNetwolf();
-  }
-
-  void hide() {
-    _widgetKey.currentState!.hideNetwolf();
-  }
+  void show() => _widgetKey.currentState!.showNetwolf();
+  void hide() => _widgetKey.currentState!.hideNetwolf();
+  void enableLogging() => _logging = true;
+  void disableLogging() => _logging = false;
+  // ignore: avoid_positional_boolean_parameters
+  void setLogging(bool value) => value ? enableLogging() : disableLogging();
 
   void addResponse(NetwolfResponse response) {
-    if (!enabled) return;
+    if (!logging) return;
 
     responses.insert(
       0,
@@ -94,9 +93,5 @@ class NetwolfController {
     _updateListUi();
   }
 
-  void _enable() => _enabled = true;
-  void _disable() => _enabled = false;
-  void _updateListUi() {
-    if (enabled) _listingKey.currentState?.markNeedsBuild();
-  }
+  void _updateListUi() => _listingKey.currentState?.markNeedsBuild();
 }

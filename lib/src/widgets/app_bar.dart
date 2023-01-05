@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:netwolf/netwolf.dart';
+import 'package:netwolf/src/dialogs/dialogs.dart';
 import 'package:netwolf/src/widgets/widgets.dart';
 
 class NetwolfAppBar extends StatelessWidget with PreferredSizeWidget {
@@ -52,7 +53,8 @@ class NetwolfAppBar extends StatelessWidget with PreferredSizeWidget {
     return [
       IconButton(
         icon: const Icon(Icons.settings),
-        onPressed: () {},
+        onPressed: () =>
+            NetwolfRouter.of(context).present(SettingsDialog(controller)),
       ),
       IconButton(
         icon: const Icon(Icons.close),

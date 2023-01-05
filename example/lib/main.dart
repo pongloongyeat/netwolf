@@ -24,8 +24,6 @@ class SomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Enabled: ${NetwolfController.instance.enabled}'),
-              const SizedBox(height: 16),
               Wrap(
                 spacing: 16,
                 runSpacing: 16,

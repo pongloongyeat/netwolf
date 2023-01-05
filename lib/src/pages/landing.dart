@@ -12,7 +12,7 @@ class NetwolfLanding extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           NetwolfAppBar(
-            title: 'Netwolf',
+            title: kPackageName,
             controller: controller,
           ),
           const SizedBox(height: 16),
