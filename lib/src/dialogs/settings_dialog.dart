@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:netwolf/src/constants.dart';
 import 'package:netwolf/src/dialogs/dialogs.dart';
 import 'package:netwolf/src/widgets/widgets.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsDialog extends StatelessWidget {
   const SettingsDialog({
@@ -63,25 +62,11 @@ class SettingsDialog extends StatelessWidget {
   }
 
   Widget _buildFooter() {
-    return FutureBuilder<PackageInfo?>(
-      future: PackageInfo.fromPlatform(),
-      builder: (context, snapshot) {
-        final data = snapshot.data;
-
-        if (data != null) {
-          final version = data.version;
-          final buildNumber = data.buildNumber;
-
-          return Center(
-            child: Text(
-              '$kPackageName $version ($buildNumber)',
-              style: const TextStyle(fontWeight: FontWeight.w300),
-            ),
-          );
-        }
-
-        return Container();
-      },
+    return const Center(
+      child: Text(
+        '$kPackageName $kVersionName',
+        style: TextStyle(fontWeight: FontWeight.w300),
+      ),
     );
   }
 }
