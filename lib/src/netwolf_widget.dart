@@ -5,6 +5,7 @@ import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/widgets/widgets.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
+import 'package:shake/shake.dart';
 
 class NetwolfWidget extends StatefulWidget {
   const NetwolfWidget({
@@ -32,6 +33,8 @@ class _NetwolfWidgetState extends State<NetwolfWidget> {
   @override
   void initState() {
     super.initState();
+
+    ShakeDetector.autoStart(onPhoneShake: _show);
     NotificationDispatcher.instance
       ..addObserver(
         this,
@@ -71,7 +74,7 @@ class _NetwolfWidgetState extends State<NetwolfWidget> {
   }
 
   void _show() {
-    if (widget.enabled) setState(() => _shown = true);
+    if (widget.enabled && mounted) setState(() => _shown = true);
   }
 
   void _hide() {
