@@ -46,49 +46,38 @@ class _FilterDialogState extends State<FilterDialog> {
             value: _selectedRequestMethod,
             items: HttpRequestMethod.values,
             itemStringBuilder: (e) => e.name.toUpperCase(),
-            onChanged: (value) => setState(() {
-              _selectedRequestMethod = value;
-            }),
+            onChanged: (value) {
+              setState(() => _selectedRequestMethod = value);
+              widget.onSorted(_selectedRequestMethod, _selectedResponseStatus);
+            },
           ),
           _SortingField<HttpResponseStatus>(
             'By status',
             value: _selectedResponseStatus,
             items: HttpResponseStatus.values,
-            itemStringBuilder: (e) => e.name.toTitleCase(),
-            onChanged: (value) => setState(() {
-              _selectedResponseStatus = value;
-            }),
+            itemStringBuilder: (e) => '${e.name.camelToSentenceCase()}: '
+                '${e.responseCodeStart} - ${e.responseCodeEnd}',
+            onChanged: (value) {
+              setState(() => _selectedResponseStatus = value);
+              widget.onSorted(_selectedRequestMethod, _selectedResponseStatus);
+            },
           ),
         ],
       ),
-      buttons: Row(
-        children: [
-          const Spacer(),
-          ElevatedButton(
-            style: (Theme.of(context).elevatedButtonTheme.style ??
-                    ElevatedButton.styleFrom())
-                .copyWith(
-              backgroundColor: MaterialStateProperty.all(kDestructiveColor),
-            ),
-            onPressed: () {
-              widget.onClearFiltersPressed();
-              NetwolfRouter.of(context).dismiss();
-            },
-            child: const Text('Clear filters'),
+      buttons: [
+        ElevatedButton(
+          style: (Theme.of(context).elevatedButtonTheme.style ??
+                  ElevatedButton.styleFrom())
+              .copyWith(
+            backgroundColor: MaterialStateProperty.all(kDestructiveColor),
           ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () {
-              widget.onSorted(
-                _selectedRequestMethod,
-                _selectedResponseStatus,
-              );
-              NetwolfRouter.of(context).dismiss();
-            },
-            child: const Text('Apply'),
-          ),
-        ],
-      ),
+          onPressed: () {
+            widget.onClearFiltersPressed();
+            NetwolfRouter.of(context).dismiss();
+          },
+          child: const Text('Clear filters'),
+        ),
+      ],
     );
   }
 }
@@ -123,7 +112,7 @@ class _SortingField<T extends Object> extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
-          child: _DropdownButton(
+          child: _NetwolfDropdownButton(
             value: value,
             items: items
                 .map(
@@ -144,8 +133,9 @@ class _SortingField<T extends Object> extends StatelessWidget {
 
 /// To mimic a [DropdownButton] because the [NetwolfWidget] is not
 /// meant to wrap an existing [Navigator].
-class _DropdownButton<T extends Object?> extends StatefulWidget {
-  const _DropdownButton({
+class _NetwolfDropdownButton<T extends Object?> extends StatefulWidget {
+  const _NetwolfDropdownButton({
+    super.key,
     required this.value,
     required this.items,
     required this.onChanged,
@@ -156,11 +146,12 @@ class _DropdownButton<T extends Object?> extends StatefulWidget {
   final ValueChanged<T?>? onChanged;
 
   @override
-  State<_DropdownButton<T>> createState() => _DropdownButtonState<T>();
+  State<_NetwolfDropdownButton<T>> createState() =>
+      _NetwolfDropdownButtonState<T>();
 }
 
-class _DropdownButtonState<T extends Object?>
-    extends State<_DropdownButton<T>> {
+class _NetwolfDropdownButtonState<T extends Object?>
+    extends State<_NetwolfDropdownButton<T>> {
   BoxConstraints? _constraints;
   bool _isShown = false;
 

@@ -8,6 +8,10 @@ extension StringX on String {
 
     return '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
   }
+
+  String camelToSentenceCase() {
+    return replaceAll(RegExp('(?<!^)(?=[A-Z])'), ' ').toTitleCase();
+  }
 }
 
 extension HttpResponseStatusX on HttpResponseStatus? {
@@ -15,30 +19,42 @@ extension HttpResponseStatusX on HttpResponseStatus? {
     switch (this) {
       case HttpResponseStatus.success:
         return kSuccessColor;
-      case HttpResponseStatus.failed:
+      case HttpResponseStatus.clientError:
+      case HttpResponseStatus.serverError:
         return kErrorColor;
+      case HttpResponseStatus.info:
+      case HttpResponseStatus.redirect:
       case null:
         return kUnknownColor;
     }
   }
 }
 
-extension IterableX<E> on Iterable<E> {
-  /// Checks whether all elements of this iterable satisfies [test].
-  ///
-  /// Checks every element in iteration order, and returns `false` if
-  /// any of them make [test] return `false`, otherwise returns true.
-  ///
-  /// Example:
-  /// ```dart
-  /// final numbers = <int>[1, 2, 3, 5, 6, 7];
-  /// var result = numbers.all((element) => element >= 5); // false;
-  /// result = numbers.all((element) => element >= 1); // true;
-  /// ```
-  bool all(bool Function(E element) test) {
-    for (final element in this) {
-      if (!test(element)) return false;
+extension ListWidgetExtensions on List<Widget> {
+  List<Widget> joined(
+    Widget? separator, {
+    bool applyBeforeFirstItem = false,
+    bool applyAfterLastItem = false,
+    bool reverse = false,
+  }) {
+    if (separator == null || length <= 1) return this;
+
+    final widgets = <Widget>[];
+
+    if (applyBeforeFirstItem) widgets.add(separator);
+
+    for (var i = 0; i < length - 1; i++) {
+      final index = reverse ? length - 1 - i : i;
+
+      final widget = this[index];
+      widgets
+        ..add(widget)
+        ..add(separator);
     }
-    return true;
+
+    widgets.add(last);
+
+    if (applyAfterLastItem) widgets.add(separator);
+    return widgets;
   }
 }

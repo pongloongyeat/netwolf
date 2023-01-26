@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:netwolf/netwolf.dart';
 
@@ -7,13 +6,13 @@ void main() {
   runApp(
     const MaterialApp(
       builder: NetwolfWidget.builder,
-      home: SomePage(),
+      home: HomePage(),
     ),
   );
 }
 
-class SomePage extends StatelessWidget {
-  const SomePage({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +31,13 @@ class SomePage extends StatelessWidget {
                     onPressed: NetwolfController.instance.show,
                     child: const Text('Show'),
                   ),
-                  const ElevatedButton(
-                    onPressed: null,
-                    child: Text('Mock response'),
-                  ),
                   ElevatedButton(
-                    onPressed: () => NetwolfController.instance
-                        .addResponse(_generateRandomResponse()),
-                    child: const Text('Add custom response'),
+                    onPressed: () {
+                      Dio()
+                        ..interceptors.add(NetwolfDioInterceptor())
+                        ..get('https://pokeapi.co/api/v2/pokemon-form/132/');
+                    },
+                    child: const Text('Mock response'),
                   ),
                 ],
               ),
@@ -49,16 +47,4 @@ class SomePage extends StatelessWidget {
       ),
     );
   }
-
-  NetwolfResponse _generateRandomResponse() => NetwolfResponse(
-        url: Random().nextBool() ? 'https://google.com/' : null,
-        method: Random().nextBool()
-            ? HttpRequestMethod
-                .values[Random().nextInt(HttpRequestMethod.values.length)]
-            : null,
-        status: Random().nextBool()
-            ? HttpResponseStatus
-                .values[Random().nextInt(HttpResponseStatus.values.length)]
-            : null,
-      );
 }

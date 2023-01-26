@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:netwolf/src/extensions.dart';
 
 class BaseDialog extends StatelessWidget {
   const BaseDialog({
@@ -11,7 +12,7 @@ class BaseDialog extends StatelessWidget {
 
   final String title;
   final Widget content;
-  final Widget? buttons;
+  final List<ElevatedButton>? buttons;
   final Widget? footer;
 
   @override
@@ -30,12 +31,24 @@ class BaseDialog extends StatelessWidget {
             const SizedBox(height: 16),
             content,
             if (buttons != null) const SizedBox(height: 16),
-            if (buttons != null) buttons!,
+            if (buttons != null) _buildButtons(buttons!),
             if (footer != null) const SizedBox(height: 16),
             if (footer != null) footer!
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildButtons(List<ElevatedButton> buttons) {
+    if (buttons.length == 1) return buttons.first;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: buttons
+          .map((e) => Flexible(child: e))
+          .toList()
+          .joined(const SizedBox(width: 8)),
     );
   }
 }

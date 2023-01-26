@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/constants.dart';
 import 'package:netwolf/src/dialogs/dialogs.dart';
 import 'package:netwolf/src/widgets/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-class SettingsDialog extends StatefulWidget {
-  const SettingsDialog(this.controller, {super.key});
+class SettingsDialog extends StatelessWidget {
+  const SettingsDialog({
+    super.key,
+    required this.logging,
+    required this.onClearDataPressed,
+    required this.onLoggingChanged,
+  });
 
-  final NetwolfController controller;
+  final bool logging;
+  final VoidCallback onClearDataPressed;
+  final ValueChanged<bool> onLoggingChanged;
 
-  @override
-  State<SettingsDialog> createState() => _SettingsDialogState();
-}
-
-class _SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext context) {
     return BaseDialog(
       title: 'Settings',
       content: _buildContent(context),
-      buttons: _buildButtons(),
+      buttons: _buildButtons(context),
       footer: _buildFooter(),
     );
   }
@@ -38,28 +39,27 @@ class _SettingsDialogState extends State<SettingsDialog> {
     return _buildRow(
       'Logging',
       Switch.adaptive(
-        value: widget.controller.logging,
-        onChanged: (value) {
-          widget.controller.setLogging(value);
-          setState(() {});
-        },
+        value: logging,
+        onChanged: onLoggingChanged,
       ),
     );
   }
 
-  Widget _buildButtons() {
-    return ElevatedButton(
-      onPressed: () {
-        widget.controller.clearResponses();
-        NetwolfRouter.of(context).dismiss();
-      },
-      style: (Theme.of(context).elevatedButtonTheme.style ??
-              ElevatedButton.styleFrom())
-          .copyWith(
-        backgroundColor: MaterialStateProperty.all(kDestructiveColor),
+  List<ElevatedButton> _buildButtons(BuildContext context) {
+    return [
+      ElevatedButton(
+        onPressed: () {
+          onClearDataPressed();
+          NetwolfRouter.of(context).dismiss();
+        },
+        style: (Theme.of(context).elevatedButtonTheme.style ??
+                ElevatedButton.styleFrom())
+            .copyWith(
+          backgroundColor: MaterialStateProperty.all(kDestructiveColor),
+        ),
+        child: const Text('Clear data'),
       ),
-      child: const Text('Clear data'),
-    );
+    ];
   }
 
   Widget _buildFooter() {

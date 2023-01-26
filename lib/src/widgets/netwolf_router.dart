@@ -60,9 +60,9 @@ class NetwolfRouterState extends State<NetwolfRouter> {
 
   bool canPop() => _pageStack.length > 1;
 
-  void push(Widget widget) {
+  void push(WidgetBuilder builder) {
     setState(() {
-      _pageStack.add(widget);
+      _pageStack.add(builder(context));
       _controller.animateToPage(
         _pageStack.length - 1,
         duration: kAnimationDuration,
@@ -72,19 +72,18 @@ class NetwolfRouterState extends State<NetwolfRouter> {
   }
 
   void pop() {
-    setState(() {
-      _controller.animateToPage(
-        _pageStack.length - 2,
-        duration: kAnimationDuration,
-        curve: kAnimationCurveOut,
-      );
-      _pageStack.removeLast();
-    });
+    _controller.animateToPage(
+      _pageStack.length - 2,
+      duration: kAnimationDuration,
+      curve: kAnimationCurveOut,
+    );
+
+    setState(_pageStack.removeLast);
   }
 
-  void present(Widget widget) {
+  void present(WidgetBuilder builder) {
     setState(() {
-      _presentedStack.add(_OverlayWidget(child: widget));
+      _presentedStack.add(_OverlayWidget(child: builder(context)));
     });
   }
 

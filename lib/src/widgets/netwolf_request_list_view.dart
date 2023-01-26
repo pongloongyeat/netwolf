@@ -1,48 +1,107 @@
-part of '../widget.dart';
+import 'package:flutter/material.dart';
+import 'package:netwolf/netwolf.dart';
+import 'package:netwolf/src/enums.dart';
+import 'package:netwolf/src/extensions.dart';
+import 'package:netwolf/src/pages/pages.dart';
+import 'package:netwolf/src/widgets/widgets.dart';
+import 'package:notification_dispatcher/notification_dispatcher.dart';
 
-class _RequestListView extends StatefulWidget {
-  const _RequestListView({
-    super.key,
-    required this.controller,
-  });
-
-  final NetwolfController controller;
+class NetwolfRequestListView extends StatefulWidget {
+  const NetwolfRequestListView({super.key});
 
   @override
-  State<_RequestListView> createState() => _RequestListViewState();
+  State<NetwolfRequestListView> createState() => _NetwolfRequestListViewState();
 }
 
-class _RequestListViewState extends State<_RequestListView> {
+class _NetwolfRequestListViewState extends State<NetwolfRequestListView> {
+  String? _searchTerm;
+  HttpRequestMethod? _method;
+  HttpResponseStatus? _status;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationDispatcher.instance
+      ..addObserver(
+        this,
+        name: NotificationName.search.name,
+        callback: _search,
+      )
+      ..addObserver(
+        this,
+        name: NotificationName.clearSearch.name,
+        callback: (_) => _clearSearch(),
+      )
+      ..addObserver(
+        this,
+        name: NotificationName.updateList.name,
+        callback: (_) => _updateList(),
+      )
+      ..addObserver(
+        this,
+        name: NotificationName.updateFilters.name,
+        callback: _updateFilters,
+      )
+      ..addObserver(
+        this,
+        name: NotificationName.clearFilters.name,
+        callback: (_) => _clearFilters(),
+      );
+  }
+
+  @override
+  void dispose() {
+    NotificationDispatcher.instance.removeObserver(this);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AnimatedIndexedStack(
-      index: widget.controller._isSearching ? 0 : 1,
-      children: [
-        _BaseRequestListView(
-          emptyListingTextBuilder: (searchTerm, method, status) =>
-              'No requests found with the following filters:\n\n'
-              'Search term: "$searchTerm"\n'
-              // ignore: lines_longer_than_80_chars
-              'Filter by request method: ${(method?.name ?? '').toUpperCase()}\n'
-              // ignore: lines_longer_than_80_chars
-              'Filter by response status: ${(status?.name ?? '').toUpperCase()}\n',
-          searchTerm: widget.controller._searchTerm,
-          filterByRequestMethod: widget.controller._filteredMethod,
-          filterByResponseStatus: widget.controller._filteredStatus,
-          controller: widget.controller,
-          responses: widget.controller.responses,
-        ),
-        _BaseRequestListView(
-          emptyListingTextBuilder: (_, __, ___) =>
-              'No requests recorded.\nSend a network request to begin.',
-          responses: widget.controller.responses,
-          controller: widget.controller,
-        ),
-      ],
+    return _BaseRequestListView(
+      emptyListingTextBuilder: (searchTerm, method, status) =>
+          'No requests found with the following filters:\n\n'
+          'Search term: "$searchTerm"\n'
+          'Request method: ${(method?.name ?? '-').toUpperCase()}\n'
+          'Response status: ${(status?.name ?? '-').toUpperCase()}\n',
+      searchTerm: _searchTerm,
+      filterByRequestMethod: _method,
+      filterByResponseStatus: _status,
+      responses: NetwolfController.instance.responses,
     );
   }
 
-  void markNeedsBuild() => setState(() {});
+  void _search(NotificationMessage message) {
+    final searchTerm = message.info?[NotificationKey.searchTerm.name];
+
+    if (searchTerm is String) {
+      setState(() => _searchTerm = searchTerm);
+    }
+  }
+
+  void _clearSearch() {
+    setState(() => _searchTerm = null);
+  }
+
+  void _updateList() {
+    setState(() {});
+  }
+
+  void _updateFilters(NotificationMessage message) {
+    final method = message.info?[NotificationKey.method.name];
+    final status = message.info?[NotificationKey.status.name];
+
+    if (method is HttpRequestMethod?) _method = method;
+    if (status is HttpResponseStatus?) _status = status;
+
+    setState(() {});
+  }
+
+  void _clearFilters() {
+    setState(() {
+      _method = null;
+      _status = null;
+    });
+  }
 }
 
 class _BaseRequestListView extends StatelessWidget {
@@ -51,7 +110,6 @@ class _BaseRequestListView extends StatelessWidget {
     this.searchTerm,
     this.filterByRequestMethod,
     this.filterByResponseStatus,
-    required this.controller,
     required this.responses,
   });
 
@@ -63,14 +121,8 @@ class _BaseRequestListView extends StatelessWidget {
   final String? searchTerm;
   final HttpRequestMethod? filterByRequestMethod;
   final HttpResponseStatus? filterByResponseStatus;
-  final NetwolfController controller;
 
   final List<NetwolfResponseWithRelativeTimestamp> responses;
-
-  bool get shouldFilter =>
-      (searchTerm ?? '').isNotEmpty ||
-      filterByRequestMethod != null ||
-      filterByResponseStatus != null;
 
   @override
   Widget build(BuildContext context) {
@@ -148,9 +200,11 @@ class _BaseRequestListView extends StatelessWidget {
     NetwolfResponseWithRelativeTimestamp response,
   ) {
     final method = response.response.method;
+    final responseCode = response.response.responseCode;
     final status = response.response.status;
     final url = response.response.url;
-    final timestampInMs = response.relativeTimestampInMilliseconds;
+    final relativeTimestamp = response.relativeTimestamp;
+    final timestampInMs = relativeTimestamp.inMilliseconds;
 
     final milliseconds = timestampInMs % 1000;
     final seconds = ((timestampInMs / 1000) % 60).floor();
@@ -158,7 +212,7 @@ class _BaseRequestListView extends StatelessWidget {
 
     return InkWell(
       onTap: () => NetwolfRouter.of(context)
-          .push(ResponseDetails(controller: controller, response: response)),
+          .push((context) => DetailsPage(response: response)),
       child: Row(
         children: [
           Expanded(
@@ -167,9 +221,7 @@ class _BaseRequestListView extends StatelessWidget {
               child: AspectRatio(
                 aspectRatio: 1,
                 child: Center(
-                  child: Text(
-                    '${status?.name}'.toUpperCase(),
-                  ),
+                  child: Text('$responseCode'),
                 ),
               ),
             ),

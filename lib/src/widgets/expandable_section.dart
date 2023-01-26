@@ -5,7 +5,7 @@ class ExpandableSection extends StatefulWidget {
     super.key,
     this.expand = false,
     this.duration = const Duration(milliseconds: 300),
-    this.curve = Curves.easeInOut,
+    this.curve = Curves.linear,
     this.axisAlignment = 1,
     required this.child,
   });

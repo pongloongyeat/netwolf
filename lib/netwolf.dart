@@ -1,6 +1,7 @@
 library netwolf;
 
-export 'src/enums.dart';
+export 'src/enums.dart' hide NotificationName, NotificationKey;
+export 'src/interceptors/interceptors.dart';
+export 'src/netwolf_controller.dart';
 export 'src/netwolf_response.dart';
-export 'src/widget.dart'
-    hide NetwolfResponseWithRelativeTimestamp, NetwolfLanding;
+export 'src/netwolf_widget.dart';

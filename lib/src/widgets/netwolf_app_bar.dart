@@ -2,20 +2,19 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:netwolf/netwolf.dart';
-import 'package:netwolf/src/dialogs/dialogs.dart';
 import 'package:netwolf/src/widgets/widgets.dart';
 
 class NetwolfAppBar extends StatelessWidget with PreferredSizeWidget {
   const NetwolfAppBar({
     super.key,
     required this.title,
-    required this.controller,
     this.bottom,
+    this.actions,
   });
 
   final String title;
-  final NetwolfController controller;
   final PreferredSizeWidget? bottom;
+  final List<IconButton>? actions;
 
   @override
   Size get preferredSize =>
@@ -51,14 +50,10 @@ class NetwolfAppBar extends StatelessWidget with PreferredSizeWidget {
 
   List<Widget> _buildActions(BuildContext context) {
     return [
-      IconButton(
-        icon: const Icon(Icons.settings),
-        onPressed: () =>
-            NetwolfRouter.of(context).present(SettingsDialog(controller)),
-      ),
+      ...actions ?? [],
       IconButton(
         icon: const Icon(Icons.close),
-        onPressed: controller.hide,
+        onPressed: NetwolfController.instance.hide,
       ),
       const SizedBox(width: 12),
     ];
