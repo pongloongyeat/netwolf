@@ -13,23 +13,29 @@ class CopyableText extends StatelessWidget {
   Widget build(BuildContext context) {
     const style = TextStyle(fontSize: 16);
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onLongPress: () {
-        Clipboard.setData(ClipboardData(text: source)).then(
-          (value) => ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-            const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              padding: EdgeInsets.all(16),
-              content: Text('Copied to clipboard'),
+    return Stack(
+      children: [
+        Text(
+          source,
+          style: style,
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: IconButton(
+            icon: const Icon(Icons.copy),
+            onPressed: () =>
+                Clipboard.setData(ClipboardData(text: source)).then(
+              (_) => ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+                const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  padding: EdgeInsets.all(16),
+                  content: Text('Copied to clipboard'),
+                ),
+              ),
             ),
           ),
-        );
-      },
-      child: Text(
-        source,
-        style: style,
-      ),
+        ),
+      ],
     );
   }
 }
