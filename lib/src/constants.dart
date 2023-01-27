@@ -15,4 +15,4 @@ const kOverlayColor = Colors.black54;
 
 const kLabelTextStyle = TextStyle(fontSize: 16);
 
-const kDefaultPadding = EdgeInsets.symmetric(horizontal: 20, vertical: 32);
+const kDefaultPadding = EdgeInsets.all(20);
