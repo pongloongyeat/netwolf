@@ -5,8 +5,9 @@ import 'package:netwolf/netwolf.dart';
 void main() {
   runApp(
     const MaterialApp(
-      builder: NetwolfWidget.builder,
-      home: HomePage(),
+      home: NetwolfWidget(
+        child: HomePage(),
+      ),
     ),
   );
 }

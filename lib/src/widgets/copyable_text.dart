@@ -15,10 +15,7 @@ class CopyableText extends StatelessWidget {
 
     return Stack(
       children: [
-        Text(
-          source,
-          style: style,
-        ),
+        SelectableText(source, style: style),
         Align(
           alignment: Alignment.topRight,
           child: IconButton(

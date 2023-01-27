@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/dialogs/dialogs.dart';
 import 'package:netwolf/src/enums.dart';
-import 'package:netwolf/src/widgets/widgets.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class NetwolfSearchBar extends StatefulWidget {
@@ -39,8 +38,9 @@ class _NetwolfSearchBarState extends State<NetwolfSearchBar> {
         const SizedBox(width: 8),
         IconButton(
           icon: Icon(Icons.sort, color: Colors.grey[600]),
-          onPressed: () => NetwolfRouter.of(context).present(
-            (context) => FilterDialog(
+          onPressed: () => showDialog<void>(
+            context: context,
+            builder: (dialogContext) => FilterDialog(
               initialRequestMethod: _method,
               initialResponseStatus: _status,
               onClearFiltersPressed: () => NotificationDispatcher.instance.post(
@@ -103,10 +103,6 @@ class _SearchBarState extends State<SearchBar> {
       onFocusChange: (_) => _onChanged(),
       child: TextField(
         controller: _controller,
-
-        // Disable selection to prevent looking up the widget tree
-        // for a non-existent Overlay widget.
-        enableInteractiveSelection: false,
         decoration: InputDecoration(
           hintText: 'Search by URL',
           suffixIcon: IconButton(

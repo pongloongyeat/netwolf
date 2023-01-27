@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:netwolf/netwolf.dart';
-import 'package:netwolf/src/widgets/widgets.dart';
 
 class NetwolfAppBar extends StatelessWidget with PreferredSizeWidget {
   const NetwolfAppBar({
@@ -33,13 +31,13 @@ class NetwolfAppBar extends StatelessWidget with PreferredSizeWidget {
   }
 
   Widget? _buildLeading(BuildContext context) {
-    if (!NetwolfRouter.of(context).canPop()) return null;
+    if (!Navigator.of(context).canPop()) return null;
 
     return Padding(
       padding: const EdgeInsets.only(left: 12),
       child: IconButton(
         icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
-        onPressed: NetwolfRouter.of(context).pop,
+        onPressed: Navigator.of(context).pop,
       ),
     );
   }
@@ -51,10 +49,6 @@ class NetwolfAppBar extends StatelessWidget with PreferredSizeWidget {
   List<Widget> _buildActions(BuildContext context) {
     return [
       ...actions ?? [],
-      IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: NetwolfController.instance.hide,
-      ),
       const SizedBox(width: 12),
     ];
   }

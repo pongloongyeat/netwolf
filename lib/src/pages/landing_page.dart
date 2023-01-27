@@ -20,8 +20,9 @@ class _LandingPageState extends State<LandingPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () => NetwolfRouter.of(context).present(
-              (context) => StatefulBuilder(
+            onPressed: () => showDialog<void>(
+              context: context,
+              builder: (dialogContext) => StatefulBuilder(
                 builder: (context, setState) {
                   return SettingsDialog(
                     logging: NetwolfController.instance.logging,

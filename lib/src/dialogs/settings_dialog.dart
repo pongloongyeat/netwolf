@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/constants.dart';
 import 'package:netwolf/src/dialogs/dialogs.dart';
-import 'package:netwolf/src/widgets/widgets.dart';
 
 class SettingsDialog extends StatelessWidget {
   const SettingsDialog({
@@ -49,7 +48,7 @@ class SettingsDialog extends StatelessWidget {
       ElevatedButton(
         onPressed: () {
           onClearDataPressed();
-          NetwolfRouter.of(context).dismiss();
+          Navigator.of(context).pop();
         },
         style: (Theme.of(context).elevatedButtonTheme.style ??
                 ElevatedButton.styleFrom())

@@ -3,8 +3,13 @@ import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/extensions.dart';
 import 'package:netwolf/src/pages/pages.dart';
-import 'package:netwolf/src/widgets/widgets.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
+
+typedef EmptyListingTextBuilder = String Function(
+  String searchTerm,
+  HttpRequestMethod? method,
+  HttpResponseStatus? status,
+);
 
 class NetwolfRequestListView extends StatefulWidget {
   const NetwolfRequestListView({super.key});
@@ -113,15 +118,10 @@ class _BaseRequestListView extends StatelessWidget {
     required this.responses,
   });
 
-  final String Function(
-    String searchTerm,
-    HttpRequestMethod? method,
-    HttpResponseStatus? status,
-  ) emptyListingTextBuilder;
+  final EmptyListingTextBuilder emptyListingTextBuilder;
   final String? searchTerm;
   final HttpRequestMethod? filterByRequestMethod;
   final HttpResponseStatus? filterByResponseStatus;
-
   final List<NetwolfResponseWithRelativeTimestamp> responses;
 
   @override
@@ -211,8 +211,10 @@ class _BaseRequestListView extends StatelessWidget {
     final minutes = (timestampInMs / 1000 / 60).floor();
 
     return InkWell(
-      onTap: () => NetwolfRouter.of(context)
-          .push((context) => DetailsPage(response: response)),
+      onTap: () => showCustomModalBottomSheet<void>(
+        context: context,
+        builder: (_) => DetailsPage(response: response),
+      ),
       child: Row(
         children: [
           Expanded(

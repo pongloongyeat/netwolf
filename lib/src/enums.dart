@@ -45,7 +45,6 @@ enum HttpResponseStatus {
 
 enum NotificationName {
   show,
-  hide,
   search,
   clearSearch,
   updateList,

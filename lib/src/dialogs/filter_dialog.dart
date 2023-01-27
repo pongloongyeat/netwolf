@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_portal/flutter_portal.dart';
 import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/constants.dart';
 import 'package:netwolf/src/dialogs/dialogs.dart';
 import 'package:netwolf/src/extensions.dart';
-import 'package:netwolf/src/widgets/widgets.dart';
 
 class FilterDialog extends StatefulWidget {
   const FilterDialog({
@@ -73,7 +71,7 @@ class _FilterDialogState extends State<FilterDialog> {
           ),
           onPressed: () {
             widget.onClearFiltersPressed();
-            NetwolfRouter.of(context).dismiss();
+            Navigator.of(context).pop();
           },
           child: const Text('Clear filters'),
         ),
@@ -112,8 +110,9 @@ class _SortingField<T extends Object> extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
-          child: _NetwolfDropdownButton(
+          child: DropdownButton(
             value: value,
+            isExpanded: true,
             items: items
                 .map(
                   (e) => DropdownMenuItem(
@@ -127,94 +126,6 @@ class _SortingField<T extends Object> extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// To mimic a [DropdownButton] because the [NetwolfWidget] is not
-/// meant to wrap an existing [Navigator].
-class _NetwolfDropdownButton<T extends Object?> extends StatefulWidget {
-  const _NetwolfDropdownButton({
-    super.key,
-    required this.value,
-    required this.items,
-    required this.onChanged,
-  });
-
-  final T? value;
-  final List<DropdownMenuItem<T>>? items;
-  final ValueChanged<T?>? onChanged;
-
-  @override
-  State<_NetwolfDropdownButton<T>> createState() =>
-      _NetwolfDropdownButtonState<T>();
-}
-
-class _NetwolfDropdownButtonState<T extends Object?>
-    extends State<_NetwolfDropdownButton<T>> {
-  BoxConstraints? _constraints;
-  bool _isShown = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return IntrinsicWidth(
-      child: Stack(
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => setState(() {
-              _isShown = !_isShown;
-            }),
-            child: PortalTarget(
-              visible: _isShown,
-              anchor: const Aligned(
-                follower: Alignment.topCenter,
-                target: Alignment.bottomCenter,
-              ),
-              portalFollower: Material(
-                elevation: 8,
-                child: SizedBox(
-                  width: _constraints?.maxWidth,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: (widget.items ?? [])
-                        .map(
-                          (e) => InkWell(
-                            onTap: () {
-                              widget.onChanged?.call(e.value);
-                              setState(() {
-                                _isShown = false;
-                              });
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: e,
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  _constraints = constraints;
-
-                  return IgnorePointer(
-                    child: DropdownButton<T?>(
-                      value: widget.value,
-                      onChanged: widget.onChanged,
-                      isExpanded: true,
-                      items: widget.items,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

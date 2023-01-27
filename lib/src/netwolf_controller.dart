@@ -22,11 +22,6 @@ class NetwolfController {
     NotificationDispatcher.instance.post(name: NotificationName.show.name);
   }
 
-  /// Hides the netwolf overlay.
-  void hide() {
-    NotificationDispatcher.instance.post(name: NotificationName.hide.name);
-  }
-
   /// Enable logging.
   void enableLogging() {
     _logging = true;
