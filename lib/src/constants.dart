@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const kPackageName = 'Netwolf';
-const kVersionName = '0.0.2';
+const kVersionName = '0.0.3';
 
 const kAnimationDuration = Duration(milliseconds: 300);
 const kAnimationCurveIn = Curves.easeIn;

@@ -5,7 +5,7 @@ Inspired by [Netfox](https://github.com/kasketis/netfox) on iOS. Netwolf allows 
 Add the following line to your `pubspec.yaml` file.
 
 ```yaml
-netwolf: ^0.0.2
+netwolf: ^0.0.3
 ```
 
 ## Usage
