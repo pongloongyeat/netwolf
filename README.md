@@ -1,4 +1,4 @@
-Inspired by [Netfox](https://github.com/kasketis/netfox) on iOS. Netwolf allows for easy viewing and debugging of network requests made in your app via the use of interceptors (see [Supported clients](#supported-clients)).
+Inspired by [Netfox](https://github.com/kasketis/netfox) on iOS. Netwolf allows for easy debugging of network requests made in your app via the use of interceptors (see [Supported clients](#supported-clients)).
 
 ## Installation
 

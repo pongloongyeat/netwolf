@@ -1,5 +1,5 @@
 name: netwolf
-description: A new Flutter package project.
+description: Inspired by Netfox on iOS. Netwolf allows for easy debugging of network requests made in your app via the use of interceptors.
 version: 0.0.1
 homepage:
 
