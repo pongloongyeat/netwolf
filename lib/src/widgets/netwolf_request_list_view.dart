@@ -223,7 +223,19 @@ class _BaseRequestListView extends StatelessWidget {
               child: AspectRatio(
                 aspectRatio: 1,
                 child: Center(
-                  child: Text('$responseCode'),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('$responseCode'),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${method?.name}'.toUpperCase(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w300,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -231,21 +243,9 @@ class _BaseRequestListView extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  url.toString(),
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${method?.name}'.toUpperCase(),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w300,
-                  ),
-                )
-              ],
+            child: Text(
+              url.toString(),
+              style: const TextStyle(fontSize: 16),
             ),
           ),
           const SizedBox(width: 16),
