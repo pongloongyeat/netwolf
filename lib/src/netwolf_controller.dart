@@ -32,6 +32,7 @@ class NetwolfController {
     _logging = false;
   }
 
+  /// Adds a response to Netwolf.
   void addResponse(NetwolfResponse response) {
     if (!logging) return;
 
@@ -45,6 +46,7 @@ class NetwolfController {
     _updateListUi();
   }
 
+  /// Clears all current responses.
   void clearResponses() {
     _responses.clear();
     _updateListUi();
