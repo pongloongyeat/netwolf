@@ -10,6 +10,7 @@ environment:
 dependencies:
   collection: ^1.16.0
   dio: ^4.0.6
+  extended_text: ^9.1.2
   flutter:
     sdk: flutter
   notification_dispatcher: ^0.2.0

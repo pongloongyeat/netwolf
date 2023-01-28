@@ -1,3 +1,4 @@
+import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/enums.dart';
@@ -188,17 +189,24 @@ class BaseRequestListView extends StatelessWidget {
       removeTop: true,
       child: ListView.builder(
         itemCount: responses.length,
-        itemBuilder: (context, index) =>
-            NetwolfRequestListViewItem(responses[index]),
+        itemBuilder: (context, index) => NetwolfRequestListViewItem(
+          responses[index],
+          hasBottomSeparator: index != responses.length - 1,
+        ),
       ),
     );
   }
 }
 
 class NetwolfRequestListViewItem extends StatelessWidget {
-  const NetwolfRequestListViewItem(this.response, {super.key});
+  const NetwolfRequestListViewItem(
+    this.response, {
+    super.key,
+    this.hasBottomSeparator = true,
+  });
 
   final NetwolfResponseWithRelativeTimestamp response;
+  final bool hasBottomSeparator;
 
   @override
   Widget build(BuildContext context) {
@@ -213,58 +221,100 @@ class NetwolfRequestListViewItem extends StatelessWidget {
     final seconds = ((timestampInMs / 1000) % 60).floor();
     final minutes = (timestampInMs / 1000 / 60).floor();
 
-    return InkWell(
-      onTap: () => showCustomModalBottomSheet<void>(
-        context: context,
-        builder: (_) => DetailsPage(response: response),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: ColoredBox(
-              color: status.toColor().withOpacity(0.9),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('$responseCode'),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${method?.name}'.toUpperCase(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w300,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+    return Column(
+      children: [
+        InkWell(
+          onTap: () => showCustomModalBottomSheet<void>(
+            context: context,
+            builder: (_) => DetailsPage(response: response),
+          ),
+          child: SizedBox(
+            height: 72,
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  Expanded(child: _buildPrefix(method, status, responseCode)),
+                  Expanded(flex: 3, child: _buildContent(url)),
+                  Expanded(child: _buildSuffix(minutes, seconds, milliseconds)),
+                ].joined(const SizedBox(width: 16), applyAfterLastItem: true),
               ),
             ),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            flex: 3,
-            child: Text(
-              url.toString(),
-              style: const TextStyle(fontSize: 16),
+        ),
+        if (hasBottomSeparator)
+          Row(
+            children: [
+              Expanded(child: _buildSeparator()),
+              Expanded(flex: 3, child: _buildSeparator(color: Colors.black26)),
+              Expanded(child: _buildSeparator(color: Colors.black26)),
+            ].joined(
+              SizedBox(
+                width: 16,
+                child: _buildSeparator(color: Colors.black26),
+              ),
+              applyAfterLastItem: true,
             ),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              '${minutes}m\n${seconds}s\n${milliseconds}ms',
-              textAlign: TextAlign.end,
+      ],
+    );
+  }
+
+  Widget _buildPrefix(
+    HttpRequestMethod? method,
+    HttpResponseStatus? status,
+    int? responseCode,
+  ) {
+    return ColoredBox(
+      color: status.toColor().withOpacity(0.9),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('$responseCode'),
+            const SizedBox(height: 4),
+            Text(
+              '${method?.name}'.toUpperCase(),
               style: const TextStyle(
-                fontSize: 13,
                 fontWeight: FontWeight.w300,
               ),
-            ),
-          ),
-          const SizedBox(width: 16),
-        ],
+            )
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildContent(String? url) {
+    return ExtendedText(
+      url.toString(),
+      maxLines: 3,
+      overflowWidget: const TextOverflowWidget(
+        position: TextOverflowPosition.middle,
+        child: Text(
+          '…',
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+      style: const TextStyle(fontSize: 16),
+    );
+  }
+
+  Widget _buildSuffix(int minutes, int seconds, int milliseconds) {
+    return Text(
+      '${minutes}m\n${seconds}s\n${milliseconds}ms',
+      textAlign: TextAlign.end,
+      style: const TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w300,
+      ),
+    );
+  }
+
+  Widget _buildSeparator({Color? color}) {
+    return Container(
+      color: color,
+      width: double.infinity,
+      height: 1,
     );
   }
 }
