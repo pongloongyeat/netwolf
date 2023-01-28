@@ -85,5 +85,18 @@ void main() {
 
       NetwolfController.instance.clearResponses();
     });
+
+    testWidgets('does not show if it is already open', (tester) async {
+      final widget = buildWidget(enabled: true);
+
+      await tester.pumpWidget(widget);
+
+      NetwolfController.instance.show();
+      NetwolfController.instance.show();
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(NetwolfSheet), findsOneWidget);
+    });
   });
 }

@@ -25,6 +25,8 @@ class NetwolfWidget extends StatefulWidget {
 }
 
 class _NetwolfWidgetState extends State<NetwolfWidget> {
+  bool shown = false;
+
   @override
   void initState() {
     super.initState();
@@ -49,11 +51,12 @@ class _NetwolfWidgetState extends State<NetwolfWidget> {
   }
 
   void _show() {
-    if (widget.enabled && mounted) {
+    if (widget.enabled && mounted && !shown) {
+      shown = true;
       showCustomModalBottomSheet<void>(
         context: context,
         builder: (_) => const NetwolfSheet(),
-      );
+      ).then((value) => shown = false);
     }
   }
 }
