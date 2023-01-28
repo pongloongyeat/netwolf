@@ -1,5 +1,9 @@
 Inspired by [Netfox](https://github.com/kasketis/netfox) on iOS. Netwolf allows for easy debugging of network requests made in your app via the use of interceptors (see [Supported clients](#supported-clients)).
 
+[![Build status](https://github.com/pongloongyeat/netwolf/actions/workflows/flutter.yaml/badge.svg)](https://github.com/pongloongyeat/netwolf/actions/workflows/flutter.yaml)
+[![Pub package](https://img.shields.io/pub/v/netwolf.svg)](https://pub.dev/packages/netwolf)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 ## Installation
 
 Add the following line to your `pubspec.yaml` file.
