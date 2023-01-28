@@ -62,7 +62,7 @@ class _NetwolfRequestListViewState extends State<NetwolfRequestListView> {
 
   @override
   Widget build(BuildContext context) {
-    return _BaseRequestListView(
+    return BaseRequestListView(
       emptyListingTextBuilder: (searchTerm, method, status) =>
           'No requests found with the following filters:\n\n'
           'Search term: "$searchTerm"\n'
@@ -109,8 +109,9 @@ class _NetwolfRequestListViewState extends State<NetwolfRequestListView> {
   }
 }
 
-class _BaseRequestListView extends StatelessWidget {
-  const _BaseRequestListView({
+class BaseRequestListView extends StatelessWidget {
+  const BaseRequestListView({
+    super.key,
     required this.emptyListingTextBuilder,
     this.searchTerm,
     this.filterByRequestMethod,
@@ -187,18 +188,20 @@ class _BaseRequestListView extends StatelessWidget {
       removeTop: true,
       child: ListView.builder(
         itemCount: responses.length,
-        itemBuilder: (context, index) => _itemBuilder(
-          context,
-          responses[index],
-        ),
+        itemBuilder: (context, index) =>
+            NetwolfRequestListViewItem(responses[index]),
       ),
     );
   }
+}
 
-  Widget _itemBuilder(
-    BuildContext context,
-    NetwolfResponseWithRelativeTimestamp response,
-  ) {
+class NetwolfRequestListViewItem extends StatelessWidget {
+  const NetwolfRequestListViewItem(this.response, {super.key});
+
+  final NetwolfResponseWithRelativeTimestamp response;
+
+  @override
+  Widget build(BuildContext context) {
     final method = response.response.method;
     final responseCode = response.response.responseCode;
     final status = response.response.status;
