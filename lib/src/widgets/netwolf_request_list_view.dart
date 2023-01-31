@@ -225,19 +225,21 @@ class NetwolfRequestListViewItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildUrlPath(
-                          context,
-                          method: method,
-                          url: url,
-                          responseCode: responseCode,
-                          status: status,
-                        ),
-                        const SizedBox(height: 8),
-                        _buildUrl(context, url: url),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildUrlPath(
+                            context,
+                            method: method,
+                            url: url,
+                            responseCode: responseCode,
+                            status: status,
+                          ),
+                          const SizedBox(height: 8),
+                          _buildUrl(context, url: url),
+                        ],
+                      ),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -279,14 +281,9 @@ class NetwolfRequestListViewItem extends StatelessWidget {
     required int? responseCode,
     required HttpResponseStatus? status,
   }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '${method?.name.toUpperCase()} ${url?.path ?? ''}',
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      ],
+    return Text(
+      '${method?.name.toUpperCase()} ${url?.path ?? ''}',
+      style: Theme.of(context).textTheme.bodyText1,
     );
   }
 
