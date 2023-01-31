@@ -4,6 +4,10 @@
 
 Inspired by [Netfox](https://github.com/kasketis/netfox) on iOS. Netwolf allows for easy debugging of network requests made in your app via the use of interceptors (see [Supported clients](#supported-clients)).
 
+## Overview
+
+https://user-images.githubusercontent.com/31680656/215766013-24dbfd34-292f-4448-bd4d-76858ce97933.mp4
+
 ## Installation
 
 Add the following line to your `pubspec.yaml` file.
