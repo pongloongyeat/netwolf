@@ -1,8 +1,8 @@
-Inspired by [Netfox](https://github.com/kasketis/netfox) on iOS. Netwolf allows for easy debugging of network requests made in your app via the use of interceptors (see [Supported clients](#supported-clients)).
-
 [![Build status](https://github.com/pongloongyeat/netwolf/actions/workflows/flutter.yaml/badge.svg)](https://github.com/pongloongyeat/netwolf/actions/workflows/flutter.yaml)
 [![Pub package](https://img.shields.io/pub/v/netwolf.svg)](https://pub.dev/packages/netwolf)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+Inspired by [Netfox](https://github.com/kasketis/netfox) on iOS. Netwolf allows for easy debugging of network requests made in your app via the use of interceptors (see [Supported clients](#supported-clients)).
 
 ## Installation
 
@@ -28,9 +28,9 @@ void main() {
 }
 ```
 
-To display Netwolf, simply shake your device or call `NetwolfController.instance.show()`.
+To display Netwolf, tap anywhere (that is not a `GestureDetector`) 5 times or call `NetwolfController.instance.show()`.
 
-By default, Netwolf is only enabled for debug mode. Shaking your device or calling `NetwolfController.instance.show()` does nothing if `NetwolfWidget.enabled` is `false`. To change this behaviour, set the behaviour in `NetwolfWidget`'s constructor.
+By default, Netwolf is only enabled for debug mode. Taping it 5 times or calling `NetwolfController.instance.show()` does nothing if `NetwolfWidget.enabled` is `false`. To change this behaviour, set the behaviour in `NetwolfWidget`'s constructor.
 
 ```dart
 void main() {
@@ -56,32 +56,38 @@ For unsupported clients, you can manually log the response using `NetwolfControl
 
 ```dart
 try {
+  NetwolfController.instance.addRequest(
+    someWayOfIdentifyingThisRequest,
+    method: HttpRequestMethod.get,
+    url:'path/to/api',
+    requestHeaders: null,
+    requestBody: null,
+  );
+
   final response = await client.get('path/to/api');
   
   NetwolfController.instance.addResponse(
-    NetwolfResponse(
-      method: HttpRequestMethod.get,
-      responseCode: response.statusCode,
-      url: 'path/to/api',
-      requestHeaders: null,
-      requestBody: null,
-      responseHeaders: response.headers,
-      responseBody: response.data,
-    ),
+    someWayOfIdentifyingThisRequest,
+    responseCode: response.statusCode,
+    responseHeaders: response.headers,
+    responseBody: response.data,
+    method: null,
+    url: null,
+    requestHeaders: null,
+    requestBody: null,
   );
 
   return response.data;
 } on NetworkException catch (e) {
   NetwolfController.instance.addResponse(
-    NetwolfResponse(
-      method: HttpRequestMethod.get,
-      responseCode: e.response?.statusCode,
-      url: 'path/to/api',
-      requestHeaders: null,
-      requestBody: null,
-      responseHeaders: e.response?.headers,
-      responseBody: e.response?.data,
-    ),
+    someWayOfIdentifyingThisRequest,
+    responseCode: e.statusCode,
+    responseHeaders: e.headers,
+    responseBody: e.data,
+    method: null,
+    url: null,
+    requestHeaders: null,
+    requestBody: null,
   );
 
   return null;
