@@ -12,7 +12,7 @@
 
 ### Features
 - Added a `completed` property to `NetwolfResponse` to indicate whether or not a request has completed.
-- Added `responseTime` property to `NetwolfResponse`, indicating how long the request took to produce a response.
+- Added a `responseTime` property to `NetwolfResponse`, indicating how long the request took to produce a response.
 
 ### Changes
 - Remove usage of shake and switch to tap-based show/hide to work more easily around simulators.
