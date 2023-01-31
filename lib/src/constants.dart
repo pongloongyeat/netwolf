@@ -13,6 +13,4 @@ const kUnknownColor = Colors.grey;
 final kDestructiveColor = Colors.red[700]!;
 const kOverlayColor = Colors.black54;
 
-const kLabelTextStyle = TextStyle(fontSize: 16);
-
 const kDefaultPadding = EdgeInsets.all(20);

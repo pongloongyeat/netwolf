@@ -40,12 +40,18 @@ void main() {
       expect(find.byType(NetwolfSheet), findsNothing);
     });
 
-    testWidgets('shows added response', (tester) async {
+    testWidgets('shows added request', (tester) async {
       final widget = buildWidget(enabled: true);
 
       await tester.pumpWidget(widget);
 
-      NetwolfController.instance.addResponse(fakeResponse);
+      NetwolfController.instance.addRequest(
+        fakeRequest.requestHashCode,
+        method: fakeRequest.method,
+        url: fakeRequest.url,
+        requestHeaders: fakeRequest.requestHeaders,
+        requestBody: fakeRequest.requestBody,
+      );
       NetwolfController.instance.show();
 
       await tester.pumpAndSettle();
@@ -58,7 +64,13 @@ void main() {
 
       await tester.pumpWidget(widget);
 
-      NetwolfController.instance.addResponse(fakeResponse);
+      NetwolfController.instance.addRequest(
+        fakeRequest.requestHashCode,
+        method: fakeRequest.method,
+        url: fakeRequest.url,
+        requestHeaders: fakeRequest.requestHeaders,
+        requestBody: fakeRequest.requestBody,
+      );
       NetwolfController.instance.clearResponses();
 
       await tester.pumpAndSettle();
@@ -72,9 +84,27 @@ void main() {
       await tester.pumpWidget(widget);
 
       NetwolfController.instance
-        ..addResponse(fakeResponse.copyWith(url: 'http://1.xyz'))
-        ..addResponse(fakeResponse.copyWith(url: 'http://1.xyz'))
-        ..addResponse(fakeResponse.copyWith(url: 'http://2.xyz'))
+        ..addRequest(
+          fakeRequest.requestHashCode,
+          method: fakeRequest.method,
+          url: 'http://1.xyz',
+          requestHeaders: fakeRequest.requestHeaders,
+          requestBody: fakeRequest.requestBody,
+        )
+        ..addRequest(
+          fakeRequest.requestHashCode,
+          method: fakeRequest.method,
+          url: 'http://1.xyz',
+          requestHeaders: fakeRequest.requestHeaders,
+          requestBody: fakeRequest.requestBody,
+        )
+        ..addRequest(
+          fakeRequest.requestHashCode + 1,
+          method: fakeRequest.method,
+          url: 'http://2.xyz',
+          requestHeaders: fakeRequest.requestHeaders,
+          requestBody: fakeRequest.requestBody,
+        )
         ..show();
 
       await tester.pumpAndSettle();

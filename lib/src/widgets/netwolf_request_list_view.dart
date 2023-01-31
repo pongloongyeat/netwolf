@@ -1,6 +1,6 @@
-import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:netwolf/netwolf.dart';
+import 'package:netwolf/src/constants.dart';
 import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/extensions.dart';
 import 'package:netwolf/src/pages/pages.dart';
@@ -124,7 +124,7 @@ class BaseRequestListView extends StatelessWidget {
   final String? searchTerm;
   final HttpRequestMethod? filterByRequestMethod;
   final HttpResponseStatus? filterByResponseStatus;
-  final List<NetwolfResponseWithRelativeTimestamp> responses;
+  final List<NetwolfResponse> responses;
 
   @override
   Widget build(BuildContext context) {
@@ -134,21 +134,18 @@ class BaseRequestListView extends StatelessWidget {
       filteredResponses = filteredResponses.toList()
         ..retainWhere(
           (e) =>
-              e.response.url
-                  ?.toLowerCase()
-                  .contains(searchTerm!.toLowerCase()) ??
-              false,
+              e.url?.toLowerCase().contains(searchTerm!.toLowerCase()) ?? false,
         );
     }
 
     if (filterByRequestMethod != null) {
       filteredResponses = filteredResponses.toList()
-        ..retainWhere((e) => e.response.method == filterByRequestMethod);
+        ..retainWhere((e) => e.method == filterByRequestMethod);
     }
 
     if (filterByResponseStatus != null) {
       filteredResponses = filteredResponses.toList()
-        ..retainWhere((e) => e.response.status == filterByResponseStatus);
+        ..retainWhere((e) => e.status == filterByResponseStatus);
     }
 
     final showing = filteredResponses.length;
@@ -182,44 +179,35 @@ class BaseRequestListView extends StatelessWidget {
 
   Widget _buildListing(
     BuildContext context,
-    List<NetwolfResponseWithRelativeTimestamp> responses,
+    List<NetwolfResponse> responses,
   ) {
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
-      child: ListView.builder(
+      child: ListView.separated(
         itemCount: responses.length,
-        itemBuilder: (context, index) => NetwolfRequestListViewItem(
-          responses[index],
-          hasBottomSeparator: index != responses.length - 1,
-        ),
+        itemBuilder: (context, index) =>
+            NetwolfRequestListViewItem(responses[index]),
+        separatorBuilder: (context, index) => const Divider(),
       ),
     );
   }
 }
 
 class NetwolfRequestListViewItem extends StatelessWidget {
-  const NetwolfRequestListViewItem(
-    this.response, {
-    super.key,
-    this.hasBottomSeparator = true,
-  });
+  const NetwolfRequestListViewItem(this.response, {super.key});
 
-  final NetwolfResponseWithRelativeTimestamp response;
-  final bool hasBottomSeparator;
+  final NetwolfResponse response;
 
   @override
   Widget build(BuildContext context) {
-    final method = response.response.method;
-    final responseCode = response.response.responseCode;
-    final status = response.response.status;
-    final url = response.response.url;
-    final relativeTimestamp = response.relativeTimestamp;
-    final timestampInMs = relativeTimestamp.inMilliseconds;
-
-    final milliseconds = timestampInMs % 1000;
-    final seconds = ((timestampInMs / 1000) % 60).floor();
-    final minutes = (timestampInMs / 1000 / 60).floor();
+    final method = response.method;
+    final responseCode = response.responseCode;
+    final status = response.status;
+    final url = response.uri;
+    final timestamp = response.startTime;
+    final responseTime = response.responseTime;
+    final completed = response.completed;
 
     return Column(
       children: [
@@ -228,93 +216,102 @@ class NetwolfRequestListViewItem extends StatelessWidget {
             context: context,
             builder: (_) => DetailsPage(response: response),
           ),
-          child: SizedBox(
-            height: 72,
-            child: IntrinsicHeight(
-              child: Row(
-                children: [
-                  Expanded(child: _buildPrefix(method, status, responseCode)),
-                  Expanded(flex: 3, child: _buildContent(url)),
-                  Expanded(child: _buildSuffix(minutes, seconds, milliseconds)),
-                ].joined(const SizedBox(width: 16), applyAfterLastItem: true),
-              ),
+          child: Padding(
+            padding: kDefaultPadding.copyWith(top: 12, bottom: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildUrlPath(
+                          context,
+                          method: method,
+                          url: url,
+                          responseCode: responseCode,
+                          status: status,
+                        ),
+                        const SizedBox(height: 8),
+                        _buildUrl(context, url: url),
+                      ],
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: status.toColor(),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 6,
+                      ),
+                      child: Text(
+                        completed ? '$responseCode' : 'Pending',
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption
+                            ?.copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                _buildFooter(
+                  context,
+                  timestamp: timestamp,
+                  responseTime: responseTime,
+                ),
+              ],
             ),
           ),
         ),
-        if (hasBottomSeparator)
-          Row(
-            children: [
-              Expanded(child: _buildSeparator()),
-              Expanded(flex: 3, child: _buildSeparator(color: Colors.black26)),
-              Expanded(child: _buildSeparator(color: Colors.black26)),
-            ].joined(
-              SizedBox(
-                width: 16,
-                child: _buildSeparator(color: Colors.black26),
-              ),
-              applyAfterLastItem: true,
-            ),
-          ),
       ],
     );
   }
 
-  Widget _buildPrefix(
-    HttpRequestMethod? method,
-    HttpResponseStatus? status,
-    int? responseCode,
-  ) {
-    return ColoredBox(
-      color: status.toColor().withOpacity(0.9),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('$responseCode'),
-            const SizedBox(height: 4),
-            Text(
-              '${method?.name}'.toUpperCase(),
-              style: const TextStyle(
-                fontWeight: FontWeight.w300,
-              ),
-            )
-          ],
+  Widget _buildUrlPath(
+    BuildContext context, {
+    required HttpRequestMethod? method,
+    required Uri? url,
+    required int? responseCode,
+    required HttpResponseStatus? status,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          '${method?.name.toUpperCase()} ${url?.path ?? ''}',
+          style: Theme.of(context).textTheme.bodyText1,
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildContent(String? url) {
-    return ExtendedText(
-      url.toString(),
-      maxLines: 3,
-      overflowWidget: const TextOverflowWidget(
-        position: TextOverflowPosition.middle,
-        child: Text(
-          '…',
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
-      style: const TextStyle(fontSize: 16),
-    );
-  }
-
-  Widget _buildSuffix(int minutes, int seconds, int milliseconds) {
+  Widget _buildUrl(BuildContext context, {required Uri? url}) {
     return Text(
-      '${minutes}m\n${seconds}s\n${milliseconds}ms',
-      textAlign: TextAlign.end,
-      style: const TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w300,
-      ),
+      '${url?.scheme}://${url?.host ?? ''}',
+      style: Theme.of(context).textTheme.bodyText2,
     );
   }
 
-  Widget _buildSeparator({Color? color}) {
-    return Container(
-      color: color,
-      width: double.infinity,
-      height: 1,
+  Widget _buildFooter(
+    BuildContext context, {
+    required DateTime timestamp,
+    required Duration? responseTime,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(timestamp.toString(), style: Theme.of(context).textTheme.caption),
+        if (responseTime != null)
+          Text(
+            '${responseTime.inMilliseconds} ms',
+            style: Theme.of(context).textTheme.caption,
+          ),
+      ],
     );
   }
 }

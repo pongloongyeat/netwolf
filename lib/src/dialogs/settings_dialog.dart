@@ -24,10 +24,19 @@ class SettingsDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(String label, Widget child) {
+  Widget _buildRow(
+    BuildContext context, {
+    required String label,
+    required Widget child,
+  }) {
     return Row(
       children: [
-        Expanded(child: Text(label, style: kLabelTextStyle)),
+        Expanded(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ),
         child,
       ],
     );
@@ -35,8 +44,9 @@ class SettingsDialog extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     return _buildRow(
-      'Logging',
-      Switch.adaptive(
+      context,
+      label: 'Logging',
+      child: Switch.adaptive(
         value: logging,
         onChanged: onLoggingChanged,
       ),

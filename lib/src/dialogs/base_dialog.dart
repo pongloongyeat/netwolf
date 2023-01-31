@@ -26,7 +26,7 @@ class BaseDialog extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
             content,

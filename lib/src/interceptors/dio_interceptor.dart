@@ -1,23 +1,17 @@
 import 'package:dio/dio.dart';
-import 'package:netwolf/src/enums.dart';
-import 'package:netwolf/src/netwolf_controller.dart';
-import 'package:netwolf/src/netwolf_response.dart';
+import 'package:netwolf/netwolf.dart';
 
 class NetwolfDioInterceptor extends Interceptor {
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
-    super.onError(err, handler);
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    super.onRequest(options, handler);
 
-    NetwolfController.instance.addResponse(
-      NetwolfResponse(
-        method: HttpRequestMethod.tryParse(err.requestOptions.method),
-        responseCode: err.response?.statusCode,
-        url: err.requestOptions.uri.toString(),
-        requestHeaders: err.requestOptions.headers,
-        requestBody: err.requestOptions.data,
-        responseHeaders: err.response?.headers.map,
-        responseBody: err.response?.data,
-      ),
+    NetwolfController.instance.addRequest(
+      options.hashCode,
+      method: HttpRequestMethod.tryParse(options.method),
+      url: options.uri.toString(),
+      requestHeaders: options.headers,
+      requestBody: options.data,
     );
   }
 
@@ -29,15 +23,30 @@ class NetwolfDioInterceptor extends Interceptor {
     super.onResponse(response, handler);
 
     NetwolfController.instance.addResponse(
-      NetwolfResponse(
-        method: HttpRequestMethod.tryParse(response.requestOptions.method),
-        responseCode: response.statusCode,
-        url: response.requestOptions.uri.toString(),
-        requestHeaders: response.requestOptions.headers,
-        requestBody: response.requestOptions.data,
-        responseHeaders: response.headers.map,
-        responseBody: response.data,
-      ),
+      response.requestOptions.hashCode,
+      responseCode: response.statusCode,
+      responseHeaders: response.headers.map,
+      responseBody: response.data,
+      method: null,
+      url: null,
+      requestHeaders: null,
+      requestBody: null,
+    );
+  }
+
+  @override
+  void onError(DioError err, ErrorInterceptorHandler handler) {
+    super.onError(err, handler);
+
+    NetwolfController.instance.addResponse(
+      err.requestOptions.hashCode,
+      responseCode: err.response?.statusCode,
+      responseHeaders: err.response?.headers.map,
+      responseBody: err.response?.data,
+      method: null,
+      url: null,
+      requestHeaders: null,
+      requestBody: null,
     );
   }
 }

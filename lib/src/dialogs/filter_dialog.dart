@@ -104,7 +104,7 @@ class _SortingField<T extends Object> extends StatelessWidget {
             label,
             overflow: TextOverflow.ellipsis,
             maxLines: 999,
-            style: kLabelTextStyle,
+            style: Theme.of(context).textTheme.bodyText1,
           ),
         ),
         const SizedBox(width: 16),
@@ -117,7 +117,10 @@ class _SortingField<T extends Object> extends StatelessWidget {
                 .map(
                   (e) => DropdownMenuItem(
                     value: e,
-                    child: Text(itemStringBuilder?.call(e) ?? e.toString()),
+                    child: Text(
+                      itemStringBuilder?.call(e) ?? e.toString(),
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
                   ),
                 )
                 .toList()

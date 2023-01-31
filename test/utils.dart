@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/netwolf.dart';
 
-final fakeResponse = NetwolfResponse(
+final fakeRequest = NetwolfResponse(
   method: HttpRequestMethod.get,
   responseCode: 200,
   url: 'https://abc.xyz',
+  startTime: DateTime.now(),
+  endTime: null,
   requestHeaders: null,
   requestBody: null,
   responseHeaders: null,
   responseBody: null,
+  requestHashCode: 1,
 );
 
 class TesterHelperWidget extends StatelessWidget {

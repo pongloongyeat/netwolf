@@ -14,7 +14,7 @@ class DetailsPage extends StatelessWidget {
     required this.response,
   });
 
-  final NetwolfResponseWithRelativeTimestamp response;
+  final NetwolfResponse response;
 
   @override
   Widget build(BuildContext context) {
@@ -63,32 +63,28 @@ class DetailsPage extends StatelessWidget {
         children: [
           SectionListItem(
             label: 'URL',
-            content: response.response.url,
+            content: response.url,
           ),
           SectionListItem(
             label: 'Method',
-            content: response.response.method?.name.toUpperCase(),
+            content: response.method?.name.toUpperCase(),
           ),
           SectionListItem(
             label: 'Response code',
-            content: response.response.responseCode?.toString(),
+            content: response.responseCode?.toString(),
           ),
           SectionListItem(
             label: 'Timestamp',
-            content: response.response.timeStamp.toIso8601String(),
+            content: response.startTime.toIso8601String(),
           ),
-          SectionListItem(
-            label: 'Duration since app started',
-            content: response.relativeTimestamp.toString(),
-          ),
-        ].joined(const SizedBox(height: 24)),
+        ].joined(const SizedBox(height: 8)),
       ),
     );
   }
 
   Widget _buildRequestTab(BuildContext context) {
-    final requestHeaders = response.response.requestHeaders ?? {};
-    final requestBody = response.response.requestBody;
+    final requestHeaders = response.requestHeaders ?? {};
+    final requestBody = response.requestBody;
 
     if (requestHeaders.isEmpty && requestBody == null) {
       return const Center(
@@ -100,27 +96,15 @@ class DetailsPage extends StatelessWidget {
       padding: kDefaultPadding,
       child: Column(
         children: [
-          Column(
-            children: requestHeaders.entries
-                .map(
-                  (entry) => SectionListItem(
-                    label: entry.key,
-                    content: '${entry.value}',
-                  ),
-                )
-                .toList()
-                .joined(const SizedBox(height: 24)),
+          SectionListItem(
+            label: 'Headers',
+            content: _tryParseAsPrettyJson(requestHeaders),
           ),
+          const SizedBox(height: 16),
           if (requestBody != null)
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 32),
-              color: Colors.grey,
-              width: double.infinity,
-              height: 1,
-            ),
-          if (requestBody != null)
-            CopyableText(
-              source: _tryParseAsPrettyJson(requestBody) ?? '$requestBody',
+            SectionListItem(
+              label: 'Request body',
+              content: _tryParseAsPrettyJson(requestBody) ?? '$requestBody',
             ),
         ],
       ),
@@ -128,8 +112,8 @@ class DetailsPage extends StatelessWidget {
   }
 
   Widget _buildResponseTab(BuildContext context) {
-    final responseHeaders = response.response.responseHeaders ?? {};
-    final responseBody = response.response.responseBody;
+    final responseHeaders = response.responseHeaders ?? {};
+    final responseBody = response.responseBody;
 
     if (responseHeaders.isEmpty && responseBody == null) {
       return const Center(
@@ -141,27 +125,15 @@ class DetailsPage extends StatelessWidget {
       padding: kDefaultPadding,
       child: Column(
         children: [
-          Column(
-            children: responseHeaders.entries
-                .map(
-                  (entry) => SectionListItem(
-                    label: entry.key,
-                    content: '${entry.value}',
-                  ),
-                )
-                .toList()
-                .joined(const SizedBox(height: 24)),
+          SectionListItem(
+            label: 'Headers',
+            content: _tryParseAsPrettyJson(responseHeaders),
           ),
+          const SizedBox(height: 16),
           if (responseBody != null)
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 32),
-              color: Colors.grey,
-              width: double.infinity,
-              height: 1,
-            ),
-          if (responseBody != null)
-            CopyableText(
-              source: _tryParseAsPrettyJson(responseBody) ?? '$responseBody',
+            SectionListItem(
+              label: 'Response body',
+              content: _tryParseAsPrettyJson(responseBody) ?? '$responseBody',
             ),
         ],
       ),
