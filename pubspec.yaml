@@ -14,7 +14,6 @@ dependencies:
   flutter:
     sdk: flutter
   notification_dispatcher: ^0.2.0
-  shake: ^2.2.0
 
 dev_dependencies:
   flutter_test:

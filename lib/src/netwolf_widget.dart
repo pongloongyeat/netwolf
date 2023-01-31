@@ -6,18 +6,26 @@ import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/widgets/widgets.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
-import 'package:shake/shake.dart';
 
 class NetwolfWidget extends StatefulWidget {
   const NetwolfWidget({
     super.key,
     this.enabled = kDebugMode,
+    this.tapsToShow = 5,
     required this.child,
   });
 
   /// Enables/disables Netwolf. If disabled, this will not show the overlay
   /// even if [NetwolfController.show] is called.
   final bool enabled;
+
+  /// The number of consecutive taps ([kDoubleTapTimeout] between each tap)
+  /// to show the overlay. If null, this disables the gesture recogniser and
+  /// you may manually call [NetwolfController.show] somewhere else.
+  ///
+  /// Defaults to 5 taps.
+  final int? tapsToShow;
+
   final Widget child;
 
   @override
@@ -31,7 +39,6 @@ class _NetwolfWidgetState extends State<NetwolfWidget> {
   void initState() {
     super.initState();
 
-    ShakeDetector.autoStart(onPhoneShake: _show);
     NotificationDispatcher.instance.addObserver(
       this,
       name: NotificationName.show.name,
@@ -47,7 +54,11 @@ class _NetwolfWidgetState extends State<NetwolfWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    return SerialGestureDetector(
+      count: widget.tapsToShow,
+      onSerialTap: _show,
+      child: widget.child,
+    );
   }
 
   void _show() {
