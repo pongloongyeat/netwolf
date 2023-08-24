@@ -3,6 +3,7 @@ import 'package:netwolf/src/constants.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_app_bar.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_request_listview.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_search_bar.dart';
+import 'package:netwolf/src/ui/widgets/settings_dialog.dart';
 
 class NetwolfLandingPage extends StatelessWidget {
   const NetwolfLandingPage({super.key});
@@ -10,8 +11,17 @@ class NetwolfLandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const NetwolfAppBar(
+      appBar: NetwolfAppBar(
         title: kPackageName,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => showDialog<void>(
+              context: context,
+              builder: (_) => const SettingsDialog(),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.only(

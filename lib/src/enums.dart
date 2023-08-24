@@ -48,6 +48,12 @@ enum HttpResponseStatus {
   }
 }
 
-enum NotificationName { show, search }
+enum NotificationName {
+  show,
+  search,
+  refetchRequests,
+  updateFilters,
+  clearFilters
+}
 
-enum NotificationKey { searchTerm }
+enum NotificationKey { searchTerm, method, status }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/enums.dart';
+import 'package:netwolf/src/ui/widgets/filter_dialog.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class NetwolfSearchBar extends StatelessWidget {
@@ -16,15 +17,64 @@ class NetwolfSearchBar extends StatelessWidget {
   }
 }
 
-class _FilterButton extends StatelessWidget {
+class _FilterButton extends StatefulWidget {
   const _FilterButton();
+
+  @override
+  State<_FilterButton> createState() => _FilterButtonState();
+}
+
+class _FilterButtonState extends State<_FilterButton> {
+  HttpRequestMethod? _method;
+  HttpResponseStatus? _status;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationDispatcher.instance
+      ..addObserver(
+        this,
+        name: NotificationName.updateFilters.name,
+        callback: _onFiltersUpdated,
+      )
+      ..addObserver(
+        this,
+        name: NotificationName.clearFilters.name,
+        callback: _onFiltersCleared,
+      );
+  }
+
+  @override
+  void dispose() {
+    NotificationDispatcher.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.sort, color: Colors.grey[600]),
-      onPressed: () {},
+      onPressed: () => showDialog<void>(
+        context: context,
+        builder: (_) => FilterDialog(
+          initialRequestMethod: _method,
+          initialResponseStatus: _status,
+        ),
+      ),
     );
+  }
+
+  void _onFiltersUpdated(NotificationMessage message) {
+    final method = message.info?[NotificationKey.method.name];
+    final status = message.info?[NotificationKey.method.name];
+
+    if (method is HttpRequestMethod) _method = method;
+    if (status is HttpResponseStatus) _status = status;
+  }
+
+  void _onFiltersCleared(NotificationMessage _) {
+    _method = null;
+    _status = null;
   }
 }
 

@@ -22,6 +22,7 @@ class NetwolfAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       title: Text(title),
       bottom: bottom,
+      actions: actions,
     );
   }
 }

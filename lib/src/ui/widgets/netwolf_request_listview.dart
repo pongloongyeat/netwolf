@@ -16,21 +16,37 @@ class NetwolfRequestListView extends StatefulWidget {
 
 class _NetwolfRequestListViewState extends State<NetwolfRequestListView> {
   String? _searchTerm;
+  HttpRequestMethod? _method;
+  HttpResponseStatus? _status;
+
   List<NetwolfRequest> _requests = [];
 
   @override
   void initState() {
     super.initState();
-    NetwolfController.instance.getRequests().then((value) {
-      _requests = value.data ?? _requests;
-      if (mounted) setState(() {});
-    });
 
-    NotificationDispatcher.instance.addObserver(
-      this,
-      name: NotificationName.search.name,
-      callback: _onSearch,
-    );
+    _getRequests();
+    NotificationDispatcher.instance
+      ..addObserver(
+        this,
+        name: NotificationName.refetchRequests.name,
+        callback: _onRefetchRequests,
+      )
+      ..addObserver(
+        this,
+        name: NotificationName.search.name,
+        callback: _onSearch,
+      )
+      ..addObserver(
+        this,
+        name: NotificationName.updateFilters.name,
+        callback: _onUpdateFilters,
+      )
+      ..addObserver(
+        this,
+        name: NotificationName.clearFilters.name,
+        callback: _onClearFilters,
+      );
   }
 
   @override
@@ -41,10 +57,11 @@ class _NetwolfRequestListViewState extends State<NetwolfRequestListView> {
 
   @override
   Widget build(BuildContext context) {
-    final requests = _requests.reversed.toList();
+    final requests = _requests;
+    final filteredRequests = requests.reversed.toList();
     final searchTerm = _searchTerm ?? '';
     if (searchTerm.isNotEmpty) {
-      requests.retainWhere(
+      filteredRequests.retainWhere(
         (element) => element.uri
             .toString()
             .toLowerCase()
@@ -52,11 +69,77 @@ class _NetwolfRequestListViewState extends State<NetwolfRequestListView> {
       );
     }
 
+    if (_method != null) {
+      filteredRequests.retainWhere((element) => element.method == _method);
+    }
+
+    if (_status != null) {
+      filteredRequests.retainWhere(
+        (element) =>
+            HttpResponseStatus.fromResponseCode(element.statusCode) == _status,
+      );
+    }
+
+    final showing = filteredRequests.length;
+    final total = requests.length;
+
+    return Column(
+      children: [
+        Text('Showing $showing of $total responses'),
+        const SizedBox(height: 8),
+        Expanded(
+          child: filteredRequests.isEmpty
+              ? _buildEmptyListing()
+              : _buildListing(filteredRequests),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyListing() {
+    final searchTerm = _searchTerm ?? '';
+    final hasFilters = searchTerm.isNotEmpty;
+
+    return Center(
+      child: Column(
+        children: [
+          const Spacer(flex: 2),
+          Text(
+            hasFilters
+                ? [
+                    'No requests found with the following filters:\n\n',
+                    if (searchTerm.isNotEmpty) 'Search term: "$searchTerm"\n'
+                    // 'Request method: ${(method?.name ?? '-').toUpperCase()}\n'
+                    // 'Response status: ${(status?.name ?? '-').toUpperCase()}\n',
+                  ].join()
+                : 'No requests',
+            textAlign: TextAlign.center,
+          ),
+          const Spacer(flex: 3),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListing(List<NetwolfRequest> filteredRequests) {
     return ListView.separated(
-      itemCount: requests.length,
-      itemBuilder: (_, index) => _NetwolfRequestListViewItem(requests[index]),
+      itemCount: filteredRequests.length,
+      itemBuilder: (_, index) => _NetwolfRequestListViewItem(
+        filteredRequests[index],
+      ),
       separatorBuilder: (context, index) => const Divider(),
     );
+  }
+
+  void _getRequests() {
+    NetwolfController.instance.getRequests().then((value) {
+      _requests = value.data ?? _requests;
+      if (mounted) setState(() {});
+    });
+  }
+
+  void _onRefetchRequests(NotificationMessage _) {
+    _getRequests();
   }
 
   void _onSearch(NotificationMessage message) {
@@ -65,6 +148,23 @@ class _NetwolfRequestListViewState extends State<NetwolfRequestListView> {
     if (searchTerm is String) {
       setState(() => _searchTerm = searchTerm);
     }
+  }
+
+  void _onUpdateFilters(NotificationMessage message) {
+    final method = message.info?[NotificationKey.method.name];
+    final status = message.info?[NotificationKey.status.name];
+
+    setState(() {
+      if (method is HttpRequestMethod?) _method = method;
+      if (status is HttpResponseStatus?) _status = status;
+    });
+  }
+
+  void _onClearFilters(NotificationMessage _) {
+    setState(() {
+      _method = null;
+      _status = null;
+    });
   }
 }
 
