@@ -137,6 +137,8 @@ final class NetwolfRequest {
 
   static String get tableName => 'RESPONSES';
 
+  bool get completed => endTime != null;
+
   NetwolfRequest copyWith({
     Id? id,
     HttpRequestMethod? method,

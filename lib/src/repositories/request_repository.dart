@@ -34,7 +34,14 @@ class RequestRepository extends _RequestRepository {
   Future<Result<List<NetwolfRequest>, Exception>> getRequests() async {
     final query = await db.query(
       NetwolfRequest.tableName,
-      columns: ['id', 'method', 'url', 'start_time'],
+      columns: [
+        'id',
+        'method',
+        'url',
+        'start_time',
+        'status_code',
+        'end_time',
+      ],
     );
 
     try {

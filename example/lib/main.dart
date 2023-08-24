@@ -44,6 +44,9 @@ class HomePage extends StatelessWidget {
                         NetwolfRequest.urlString(
                           method: HttpRequestMethod.get,
                           url: 'https://pokeapi.co/api/v2/pokemon-form/132/',
+                          requestHeaders: {
+                            'a': 1,
+                          },
                         ),
                       );
                     },
@@ -55,6 +58,8 @@ class HomePage extends StatelessWidget {
                         NetwolfRequest.urlString(
                           method: HttpRequestMethod.get,
                           url: 'https://api.ipify.org?format=json',
+                          endTime: DateTime.now(),
+                          statusCode: 200,
                         ),
                       );
                     },

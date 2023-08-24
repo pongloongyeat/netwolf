@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/netwolf_controller.dart';
 import 'package:netwolf/src/enums.dart';
+import 'package:netwolf/src/ui/pages/netwolf_landing_page.dart';
 import 'package:netwolf/src/ui/widgets/serial_gesture_detector.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 
@@ -37,7 +38,7 @@ class _NetwolfWidgetState extends State<NetwolfWidget> {
 
     NotificationDispatcher.instance.addObserver(
       this,
-      name: NotificationKey.show.name,
+      name: NotificationName.show.name,
       callback: _onShow,
     );
   }
@@ -66,35 +67,36 @@ class _NetwolfWidgetState extends State<NetwolfWidget> {
 
     final context = widget.navigatorKey.currentContext!;
     _shown = true;
-    _showCustomModalBottomSheet<void>(
+    showCustomModalBottomSheet<void>(
       context: context,
-      builder: (_) => Container(),
+      builder: (_) => const NetwolfLandingPage(),
     ).then((_) => _shown = false);
   }
+}
 
-  Future<T?> _showCustomModalBottomSheet<T>({
-    required BuildContext context,
-    required WidgetBuilder builder,
-  }) {
-    final device = MediaQuery.of(context);
-    final deviceSize = device.size;
-    final statusBarHeight = device.viewPadding.top;
+Future<T?> showCustomModalBottomSheet<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+}) {
+  final device = MediaQuery.of(context);
+  final deviceSize = device.size;
+  final statusBarHeight = device.viewPadding.top;
 
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: false,
-      constraints: BoxConstraints.expand(
-        width: deviceSize.width,
-        height: deviceSize.height - statusBarHeight,
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    isDismissible: false,
+    constraints: BoxConstraints.expand(
+      width: deviceSize.width,
+      height: deviceSize.height - statusBarHeight,
+    ),
+    backgroundColor: Colors.transparent,
+    builder: (dialogContext) => ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
       ),
-      builder: (dialogContext) => ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        ),
-        child: builder(dialogContext),
-      ),
-    );
-  }
+      child: builder(dialogContext),
+    ),
+  );
 }
