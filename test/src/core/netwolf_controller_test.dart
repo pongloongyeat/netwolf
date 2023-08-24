@@ -34,8 +34,8 @@ void main() {
     });
 
     test(
-      'returns a NetwolfLoggingDisabledException if adding a request '
-      'or response when logging is disabled',
+      'returns a NetwolfLoggingDisabledException if adding or updating '
+      'a request when logging is disabled',
       () async {
         final controller = MockNetwolfController()..disableLogging();
 
