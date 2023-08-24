@@ -13,9 +13,15 @@ abstract class _NetwolfController {
 
   /// Initialises the controller and any needed tables.
   @mustCallSuper
-  Future<void> init() async {
+  Future<void> init({
+    bool restoreFromPreviousSession = false,
+  }) async {
     final path = await getDatabasesPath();
     final dbPath = '$path/netwolf.db';
+
+    if (!restoreFromPreviousSession && await databaseExists(dbPath)) {
+      await deleteDatabase(dbPath);
+    }
 
     final db = await openDatabase(
       dbPath,
