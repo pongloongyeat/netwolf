@@ -47,3 +47,5 @@ enum HttpResponseStatus {
     return null;
   }
 }
+
+enum NotificationKey { show }

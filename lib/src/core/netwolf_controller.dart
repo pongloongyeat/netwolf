@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:netwolf/src/core/exceptions.dart';
+import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/models/netwolf_request.dart';
 import 'package:netwolf/src/models/netwolf_response.dart';
 import 'package:netwolf/src/models/result.dart';
 import 'package:netwolf/src/repositories/request_repository.dart';
 import 'package:netwolf/src/repositories/response_repository.dart';
+import 'package:notification_dispatcher/notification_dispatcher.dart';
 import 'package:sqflite/sqflite.dart';
 
 @visibleForTesting
@@ -76,9 +78,6 @@ abstract class _NetwolfController {
   /// Shows the Netwolf overlay, if enabled.
   void show();
 
-  /// Hides the Netwolf overlay.
-  void hide();
-
   /// Adds a request to Netwolf. Returns the ID of the added request.
   Future<Result<NetwolfRequest, Exception>> addRequest(
     NetwolfRequest request,
@@ -109,22 +108,23 @@ class NetwolfController extends _NetwolfController {
 
   /// Enable logging.
   void enableLogging() {
-    _logging = true;
+    setLogging(true);
   }
 
   /// Disables logging.
   void disableLogging() {
-    _logging = false;
+    setLogging(false);
+  }
+
+  /// Set the current logging status.
+  // ignore: avoid_positional_boolean_parameters, use_setters_to_change_properties
+  void setLogging(bool value) {
+    _logging = value;
   }
 
   @override
   void show() {
-    // TODO: implement show
-  }
-
-  @override
-  void hide() {
-    // TODO: implement hide
+    NotificationDispatcher.instance.post(name: NotificationKey.show.name);
   }
 
   @override
