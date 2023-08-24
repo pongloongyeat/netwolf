@@ -4,15 +4,15 @@ version: 0.3.0
 homepage: https://github.com/pongloongyeat/netwolf
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 dependencies:
-  collection: ^1.16.0
-  dio: ^4.0.6
+  collection: ^1.17.1
   flutter:
     sdk: flutter
   notification_dispatcher: ^0.2.0
+  sqflite: ^2.3.0
 
 dev_dependencies:
   flutter_test:
