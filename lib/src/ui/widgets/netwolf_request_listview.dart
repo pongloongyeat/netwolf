@@ -4,6 +4,7 @@ import 'package:netwolf/src/core/netwolf_controller.dart';
 import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/extensions.dart';
 import 'package:netwolf/src/models/netwolf_request.dart';
+import 'package:netwolf/src/ui/pages/netwolf_details_page.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class NetwolfRequestListView extends StatefulWidget {
@@ -74,6 +75,7 @@ class _NetwolfRequestListViewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final requestId = request.id;
     final method = request.method;
     final statusCode = request.statusCode;
     final url = request.uri;
@@ -84,7 +86,9 @@ class _NetwolfRequestListViewItem extends StatelessWidget {
     return Column(
       children: [
         InkWell(
-          onTap: () {},
+          onTap: requestId != null
+              ? () => _navigateToDetails(context, requestId: requestId)
+              : null,
           child: Padding(
             padding: kDefaultPadding.copyWith(top: 12, bottom: 12),
             child: Column(
@@ -124,6 +128,14 @@ class _NetwolfRequestListViewItem extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _navigateToDetails(BuildContext context, {required int requestId}) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => NetwolfDetailsPage(requestId),
+      ),
     );
   }
 }

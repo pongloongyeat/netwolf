@@ -67,6 +67,9 @@ abstract class _NetwolfController {
   /// Gets all stored requests.
   Future<Result<List<NetwolfRequest>, Exception>> getRequests();
 
+  /// Gets a specific request.
+  Future<Result<NetwolfRequest, Exception>> getRequestById(Id id);
+
   /// Adds a request to Netwolf. Returns the ID of the added request.
   Future<Result<NetwolfRequest, Exception>> addRequest(
     NetwolfRequest request,
@@ -118,8 +121,12 @@ class NetwolfController extends _NetwolfController {
 
   @override
   Future<Result<List<NetwolfRequest>, Exception>> getRequests() async {
-    if (!logging) return Result.error(NetwolfLoggingDisabledException());
     return _repository.getRequests();
+  }
+
+  @override
+  Future<Result<NetwolfRequest, Exception>> getRequestById(Id id) async {
+    return _repository.getRequestById(id);
   }
 
   @override

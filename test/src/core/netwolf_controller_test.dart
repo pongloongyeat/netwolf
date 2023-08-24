@@ -77,6 +77,8 @@ void main() {
 
       when(_repository.getRequests)
           .thenAnswer((_) async => Result([mockRequest]));
+      when(() => _repository.getRequestById(any()))
+          .thenAnswer((_) async => Result(mockRequest));
       when(() => _repository.addRequest(mockRequest))
           .thenAnswer((_) async => Result(mockRequest));
       when(() => _repository.updateRequest(any(), mockRequest))
@@ -86,6 +88,9 @@ void main() {
 
       await controller.getRequests();
       verify(_repository.getRequests).called(1);
+
+      await controller.getRequestById(Random().nextInt(100));
+      verify(() => _repository.getRequestById(any())).called(1);
 
       await controller.addRequest(mockRequest);
       verify(() => _repository.addRequest(mockRequest)).called(1);
