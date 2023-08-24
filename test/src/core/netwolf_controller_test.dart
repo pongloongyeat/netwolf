@@ -75,12 +75,17 @@ void main() {
         uri: Uri(),
       );
 
+      when(_repository.getRequests)
+          .thenAnswer((_) async => Result([mockRequest]));
       when(() => _repository.addRequest(mockRequest))
           .thenAnswer((_) async => Result(mockRequest));
       when(() => _repository.updateRequest(any(), mockRequest))
           .thenAnswer((_) async => Result(mockRequest));
       when(_repository.deleteAllRequests)
           .thenAnswer((_) async => const Result(null));
+
+      await controller.getRequests();
+      verify(_repository.getRequests).called(1);
 
       await controller.addRequest(mockRequest);
       verify(() => _repository.addRequest(mockRequest)).called(1);

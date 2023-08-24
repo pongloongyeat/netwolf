@@ -64,15 +64,17 @@ abstract class _NetwolfController {
   /// Shows the Netwolf overlay, if enabled.
   void show();
 
+  /// Gets all stored requests.
+  Future<Result<List<NetwolfRequest>, Exception>> getRequests();
+
   /// Adds a request to Netwolf. Returns the ID of the added request.
   Future<Result<NetwolfRequest, Exception>> addRequest(
     NetwolfRequest request,
   );
 
-  /// Adds a response to Netwolf. If the request was not found, the
-  /// response will still be added but you will not be able to find
-  /// the matching request that gave this response. Returns the ID of
-  /// the added response.
+  /// Updates an existing request. If the request was not found, a
+  /// [NetwolfRecordNotFoundException] will be returned. Otherwise,
+  /// this simply returns the updated response.
   Future<Result<NetwolfRequest, Exception>> updateRequest(
     Id id,
     NetwolfRequest response,
@@ -111,7 +113,13 @@ class NetwolfController extends _NetwolfController {
 
   @override
   void show() {
-    NotificationDispatcher.instance.post(name: NotificationKey.show.name);
+    NotificationDispatcher.instance.post(name: NotificationName.show.name);
+  }
+
+  @override
+  Future<Result<List<NetwolfRequest>, Exception>> getRequests() async {
+    if (!logging) return Result.error(NetwolfLoggingDisabledException());
+    return _repository.getRequests();
   }
 
   @override
