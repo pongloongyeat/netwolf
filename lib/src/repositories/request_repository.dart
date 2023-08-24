@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:netwolf/src/core/exceptions.dart';
 import 'package:netwolf/src/core/typedefs.dart';
 import 'package:netwolf/src/models/netwolf_request.dart';
@@ -17,22 +19,23 @@ abstract class _RequestRepository {
 
   Future<Result<void, Exception>> deleteAllRequests();
 
-  Future<Result<Id, Exception>> deleteRequestById(Id id);
+  Future<Result<void, Exception>> deleteRequestById(Id id);
 }
 
-final class RequestRepository extends _RequestRepository {
+class RequestRepository extends _RequestRepository {
   RequestRepository(super.db);
 
   @override
   Future<Result<List<NetwolfRequest>, Exception>> getRequests() async {
     final query = await db.query(
       NetwolfRequest.tableName,
-      columns: ['id', 'method', 'url', 'startTime'],
+      columns: ['id', 'method', 'url', 'start_time'],
     );
 
     try {
       return Result(query.map(NetwolfRequest.fromDbObject).toList());
-    } catch (_) {
+    } catch (e) {
+      log(e.toString());
       return Result.error(NetwolfDecodingException());
     }
   }
@@ -46,11 +49,12 @@ final class RequestRepository extends _RequestRepository {
       limit: 1,
     );
 
-    if (query.isEmpty) return Result.error(NetwolfNotFoundException());
+    if (query.isEmpty) return Result.error(NetwolfRecordNotFoundException());
 
     try {
       return Result(NetwolfRequest.fromDbObject(query.first));
-    } catch (_) {
+    } catch (e) {
+      log(e.toString());
       return Result.error(NetwolfDecodingException());
     }
   }
@@ -70,12 +74,12 @@ final class RequestRepository extends _RequestRepository {
   }
 
   @override
-  Future<Result<Id, Exception>> deleteRequestById(Id id) async {
-    final deletedId = await db.delete(
+  Future<Result<void, Exception>> deleteRequestById(Id id) async {
+    await db.delete(
       NetwolfRequest.tableName,
       where: 'id = ?',
       whereArgs: [id],
     );
-    return Result(deletedId);
+    return const Result(null);
   }
 }

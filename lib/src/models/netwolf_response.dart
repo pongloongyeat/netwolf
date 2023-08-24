@@ -49,13 +49,15 @@ final class NetwolfResponse {
       id: map['id'] as Id?,
       statusCode: map['status_code']! as int,
       endTime: map['end_time']! as String,
-      headers: map['headers'] as String?,
+      headers: map['headers'] != null ? map['headers']! as String : null,
       body: map['body'] as String?,
       requestId: map['request_id'] as Id?,
       requestMethod: map['request_method']! as String,
       requestUrl: map['request_url']! as String,
       startTime: map['start_time']! as String,
-      requestHeaders: map['request_headers'] as String?,
+      requestHeaders: map['request_headers'] != null
+          ? map['request_headers']! as String
+          : null,
       requestBody: map['request_body'] as String?,
     );
   }
@@ -89,12 +91,12 @@ final class NetwolfResponse {
     );
   }
 
-  Map<String, Object?> toMap() => {
+  Map<String, Object?> toDbObject() => {
         'id': id,
         'request_id': request.id,
         'status_code': statusCode,
         'end_time': endTime.toIso8601String(),
-        'headers': jsonEncode(headers),
+        'headers': headers != null ? jsonEncode(headers) : null,
         'body': body,
       };
 }

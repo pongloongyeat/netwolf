@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:netwolf/src/core/exceptions.dart';
 import 'package:netwolf/src/core/typedefs.dart';
 import 'package:netwolf/src/models/netwolf_request.dart';
@@ -19,7 +21,7 @@ abstract class _ResponseRepository {
   );
 }
 
-final class ResponseRepository extends _ResponseRepository {
+class ResponseRepository extends _ResponseRepository {
   ResponseRepository(super.db);
 
   @override
@@ -39,7 +41,8 @@ ON req.id = res.id
 
     try {
       return Result(query.map(NetwolfResponse.fromDbObject).toList());
-    } catch (_) {
+    } catch (e) {
+      log(e.toString());
       return Result.error(NetwolfDecodingException());
     }
   }
@@ -61,14 +64,15 @@ SELECT  req.id as request_id,
 FROM ${NetwolfResponse.tableName} as res
 JOIN ${NetwolfRequest.tableName} as req
 ON req.id = res.id
-WHERE request_id = id
+WHERE res.id = $id
 ''');
 
-    if (query.isEmpty) return Result.error(NetwolfNotFoundException());
+    if (query.isEmpty) return Result.error(NetwolfRecordNotFoundException());
 
     try {
       return Result(NetwolfResponse.fromDbObject(query.first));
-    } catch (_) {
+    } catch (e) {
+      log(e.toString());
       return Result.error(NetwolfDecodingException());
     }
   }
@@ -77,7 +81,8 @@ WHERE request_id = id
   Future<Result<NetwolfResponse, Exception>> addResponse(
     NetwolfResponse response,
   ) async {
-    final id = await db.insert(NetwolfResponse.tableName, response.toMap());
+    final id =
+        await db.insert(NetwolfResponse.tableName, response.toDbObject());
     return Result(response.copyWith(id: id));
   }
 }

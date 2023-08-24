@@ -7,30 +7,27 @@ import 'package:netwolf/src/repositories/request_repository.dart';
 import 'package:netwolf/src/repositories/response_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
-abstract class _NetwolfController {
-  late RequestRepository _requestRepository;
-  late ResponseRepository _responseRepository;
+@visibleForTesting
+Future<Database> initDb({
+  required bool restoreFromPreviousSession,
+  required String? dbPathOverride,
+}) async {
+  final path = dbPathOverride ?? '${await getDatabasesPath()}/netwolf.db';
 
-  /// Initialises the controller and any needed tables.
-  @mustCallSuper
-  Future<void> init({
-    bool restoreFromPreviousSession = false,
-  }) async {
-    final path = await getDatabasesPath();
-    final dbPath = '$path/netwolf.db';
+  if (!restoreFromPreviousSession &&
+      dbPathOverride == null &&
+      await databaseExists(path)) {
+    await deleteDatabase(path);
+  }
 
-    if (!restoreFromPreviousSession && await databaseExists(dbPath)) {
-      await deleteDatabase(dbPath);
-    }
-
-    final db = await openDatabase(
-      dbPath,
-      version: 1,
-      onConfigure: (db) async {
-        await db.execute('PRAGMA foreign_keys = ON');
-      },
-      onCreate: (db, version) async {
-        await db.execute('''
+  return openDatabase(
+    path,
+    version: 1,
+    onConfigure: (db) async {
+      await db.execute('PRAGMA foreign_keys = ON');
+    },
+    onCreate: (db, version) async {
+      await db.execute('''
 CREATE TABLE IF NOT EXISTS ${NetwolfRequest.tableName} (
   id INTEGER NOT NULL,
   method TEXT NOT NULL,
@@ -42,7 +39,7 @@ CREATE TABLE IF NOT EXISTS ${NetwolfRequest.tableName} (
   PRIMARY KEY(id)
 );
 ''');
-        await db.execute('''
+      await db.execute('''
 CREATE TABLE IF NOT EXISTS ${NetwolfResponse.tableName} (
   id INTEGER NOT NULL,
   request_id INTEGER NOT NULL,
@@ -52,12 +49,26 @@ CREATE TABLE IF NOT EXISTS ${NetwolfResponse.tableName} (
   body TEXT,
 
   PRIMARY KEY(id),
-  FOREIGN KEY(request_id) REFERENCES ${NetwolfRequest.tableName}(id) ON DELETE CASECADE
+  FOREIGN KEY(request_id) REFERENCES ${NetwolfRequest.tableName}(id) ON DELETE CASCADE
 )
 ''');
-      },
-    );
+    },
+  );
+}
 
+abstract class _NetwolfController {
+  late RequestRepository _requestRepository;
+  late ResponseRepository _responseRepository;
+
+  /// Initialises the controller and any needed tables.
+  @mustCallSuper
+  Future<void> init({
+    bool restoreFromPreviousSession = false,
+  }) async {
+    final db = await initDb(
+      restoreFromPreviousSession: restoreFromPreviousSession,
+      dbPathOverride: null,
+    );
     _requestRepository = RequestRepository(db);
     _responseRepository = ResponseRepository(db);
   }
@@ -86,9 +97,10 @@ CREATE TABLE IF NOT EXISTS ${NetwolfResponse.tableName} (
 }
 
 class NetwolfController extends _NetwolfController {
-  NetwolfController._();
+  @visibleForTesting
+  NetwolfController();
 
-  static final instance = NetwolfController._();
+  static final instance = NetwolfController();
 
   bool _logging = true;
 
@@ -96,10 +108,14 @@ class NetwolfController extends _NetwolfController {
   bool get logging => _logging;
 
   /// Enable logging.
-  void enableLogging() => _logging = true;
+  void enableLogging() {
+    _logging = true;
+  }
 
   /// Disables logging.
-  void disableLogging() => _logging = false;
+  void disableLogging() {
+    _logging = false;
+  }
 
   @override
   void show() {
@@ -130,5 +146,28 @@ class NetwolfController extends _NetwolfController {
   @override
   Future<void> clearAll() {
     return _requestRepository.deleteAllRequests();
+  }
+}
+
+@visibleForTesting
+class MockNetwolfController extends NetwolfController {
+  @visibleForTesting
+  MockNetwolfController();
+
+  static final instance = MockNetwolfController();
+
+  @override
+  // ignore: must_call_super
+  Future<void> init({
+    bool restoreFromPreviousSession = false,
+    RequestRepository? requestRepositoryOverride,
+    ResponseRepository? responseRepositoryOverride,
+  }) async {
+    final db = await initDb(
+      restoreFromPreviousSession: restoreFromPreviousSession,
+      dbPathOverride: inMemoryDatabasePath,
+    );
+    _requestRepository = requestRepositoryOverride ?? RequestRepository(db);
+    _responseRepository = responseRepositoryOverride ?? ResponseRepository(db);
   }
 }

@@ -1,4 +1,4 @@
-class NetwolfNotFoundException implements Exception {}
+class NetwolfRecordNotFoundException implements Exception {}
 
 class NetwolfDecodingException implements Exception {}
 

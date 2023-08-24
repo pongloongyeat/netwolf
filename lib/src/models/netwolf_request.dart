@@ -48,7 +48,7 @@ final class NetwolfRequest {
       method: map['method']! as String,
       url: map['url']! as String,
       startTime: map['start_time']! as String,
-      headers: map['headers'] as String?,
+      headers: map['headers'] != null ? map['headers']! as String : null,
       body: map['body'] as String?,
     );
   }
@@ -85,7 +85,7 @@ final class NetwolfRequest {
         'method': method.name,
         'url': uri.toString(),
         'start_time': startTime.toIso8601String(),
-        'headers': jsonEncode(headers),
+        'headers': headers != null ? jsonEncode(headers) : null,
         'body': body,
       };
 }
