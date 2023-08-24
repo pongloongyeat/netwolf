@@ -41,7 +41,7 @@ class _NetwolfRequestListViewState extends State<NetwolfRequestListView> {
 
   @override
   Widget build(BuildContext context) {
-    final requests = _requests.toList();
+    final requests = _requests.reversed.toList();
     final searchTerm = _searchTerm ?? '';
     if (searchTerm.isNotEmpty) {
       requests.retainWhere(
