@@ -56,6 +56,31 @@ void main() {
       );
     });
 
+    test('can update a request', () async {
+      final result = await repository.addRequest(mockRequest);
+      final data = result.data!;
+      final updatedData = data.copyWith(
+        statusCode: 200,
+        endTime: DateTime.now(),
+      );
+      final updatedResult =
+          await repository.updateRequest(data.id!, updatedData);
+
+      expect(updatedResult.hasError, isFalse);
+      expect(updatedResult.data, isNotNull);
+      expect(updatedResult.data!.id, isNotNull);
+
+      final dbObject = updatedResult.data!.toDbObject();
+
+      expect(
+        const DeepCollectionEquality().equals(
+          dbObject,
+          updatedData.toDbObject(),
+        ),
+        isTrue,
+      );
+    });
+
     test('can get requests', () async {
       var result = await repository.getRequests();
       var data = result.data;

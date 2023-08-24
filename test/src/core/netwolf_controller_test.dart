@@ -1,16 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/core/exceptions.dart';
 import 'package:netwolf/src/repositories/request_repository.dart';
-import 'package:netwolf/src/repositories/response_repository.dart';
 
 import '../../init.dart';
 
 final class _MockRequestRepository extends Mock implements RequestRepository {}
-
-final class _MockResponseRepository extends Mock
-    implements ResponseRepository {}
 
 void main() {
   initMockDb();
@@ -45,14 +43,10 @@ void main() {
           method: HttpRequestMethod.get,
           uri: Uri(),
         );
-        final mockResponse = NetwolfResponse(
-          request: mockRequest,
-          statusCode: 200,
-          endTime: DateTime.now(),
-        );
+        final result = await controller.addRequest(mockRequest);
 
         expect(
-          await controller.addRequest(mockRequest),
+          result,
           isA<Result<NetwolfRequest, Exception>>().having(
             (s) => s.error,
             'error',
@@ -61,8 +55,8 @@ void main() {
         );
 
         expect(
-          await controller.addResponse(mockResponse),
-          isA<Result<NetwolfResponse, Exception>>().having(
+          await controller.updateRequest(Random().nextInt(100), mockRequest),
+          isA<Result<NetwolfRequest, Exception>>().having(
             (s) => s.error,
             'error',
             isA<NetwolfLoggingDisabledException>(),
@@ -73,38 +67,29 @@ void main() {
 
     test('calls the correct repository methods', () async {
       final controller = MockNetwolfController();
-      final requestRepository = _MockRequestRepository();
-      final responseRepository = _MockResponseRepository();
-      await controller.init(
-        requestRepositoryOverride: requestRepository,
-        responseRepositoryOverride: responseRepository,
-      );
+      final _repository = _MockRequestRepository();
+      await controller.init(repositoryOverride: _repository);
 
       final mockRequest = NetwolfRequest.uri(
         method: HttpRequestMethod.get,
         uri: Uri(),
       );
-      final mockResponse = NetwolfResponse(
-        request: mockRequest,
-        statusCode: 200,
-        endTime: DateTime.now(),
-      );
 
-      when(() => requestRepository.addRequest(mockRequest))
+      when(() => _repository.addRequest(mockRequest))
           .thenAnswer((_) async => Result(mockRequest));
-      when(() => responseRepository.addResponse(mockResponse))
-          .thenAnswer((_) async => Result(mockResponse));
-      when(requestRepository.deleteAllRequests)
+      when(() => _repository.updateRequest(any(), mockRequest))
+          .thenAnswer((_) async => Result(mockRequest));
+      when(_repository.deleteAllRequests)
           .thenAnswer((_) async => const Result(null));
 
       await controller.addRequest(mockRequest);
-      verify(() => requestRepository.addRequest(mockRequest)).called(1);
+      verify(() => _repository.addRequest(mockRequest)).called(1);
 
-      await controller.addResponse(mockResponse);
-      verify(() => responseRepository.addResponse(mockResponse)).called(1);
+      await controller.updateRequest(Random().nextInt(100), mockRequest);
+      verify(() => _repository.updateRequest(any(), mockRequest)).called(1);
 
       await controller.clearAll();
-      verify(requestRepository.deleteAllRequests).called(1);
+      verify(_repository.deleteAllRequests).called(1);
     });
   });
 }

@@ -8,7 +8,6 @@ environment:
   flutter: ">=3.10.0"
 
 dependencies:
-  collection: ^1.17.1
   flutter:
     sdk: flutter
   notification_dispatcher: ^0.2.0

@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:netwolf/src/core/exceptions.dart';
+import 'package:netwolf/src/core/typedefs.dart';
 import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/models/netwolf_request.dart';
-import 'package:netwolf/src/models/netwolf_response.dart';
 import 'package:netwolf/src/models/result.dart';
 import 'package:netwolf/src/repositories/request_repository.dart';
-import 'package:netwolf/src/repositories/response_repository.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -25,9 +24,6 @@ Future<Database> initDb({
   return openDatabase(
     path,
     version: 1,
-    onConfigure: (db) async {
-      await db.execute('PRAGMA foreign_keys = ON');
-    },
     onCreate: (db, version) async {
       await db.execute('''
 CREATE TABLE IF NOT EXISTS ${NetwolfRequest.tableName} (
@@ -35,32 +31,23 @@ CREATE TABLE IF NOT EXISTS ${NetwolfRequest.tableName} (
   method TEXT NOT NULL,
   url TEXT NOT NULL,
   start_time TEXT NOT NULL,
-  headers TEXT,
-  body TEXT,
+  request_headers TEXT,
+  request_body TEXT,
+
+  status_code INTEGER,
+  end_time TEXT,
+  response_headers TEXT,
+  response_body TEXT,
 
   PRIMARY KEY(id)
 );
-''');
-      await db.execute('''
-CREATE TABLE IF NOT EXISTS ${NetwolfResponse.tableName} (
-  id INTEGER NOT NULL,
-  request_id INTEGER NOT NULL,
-  status_code INTEGER NOT NULL,
-  end_time TEXT NOT NULL,
-  headers TEXT,
-  body TEXT,
-
-  PRIMARY KEY(id),
-  FOREIGN KEY(request_id) REFERENCES ${NetwolfRequest.tableName}(id) ON DELETE CASCADE
-)
 ''');
     },
   );
 }
 
 abstract class _NetwolfController {
-  late RequestRepository _requestRepository;
-  late ResponseRepository _responseRepository;
+  late RequestRepository _repository;
 
   /// Initialises the controller and any needed tables.
   @mustCallSuper
@@ -71,8 +58,7 @@ abstract class _NetwolfController {
       restoreFromPreviousSession: restoreFromPreviousSession,
       dbPathOverride: null,
     );
-    _requestRepository = RequestRepository(db);
-    _responseRepository = ResponseRepository(db);
+    _repository = RequestRepository(db);
   }
 
   /// Shows the Netwolf overlay, if enabled.
@@ -87,8 +73,9 @@ abstract class _NetwolfController {
   /// response will still be added but you will not be able to find
   /// the matching request that gave this response. Returns the ID of
   /// the added response.
-  Future<Result<NetwolfResponse, Exception>> addResponse(
-    NetwolfResponse response,
+  Future<Result<NetwolfRequest, Exception>> updateRequest(
+    Id id,
+    NetwolfRequest response,
   );
 
   /// Clears all current responses.
@@ -132,20 +119,21 @@ class NetwolfController extends _NetwolfController {
     NetwolfRequest request,
   ) async {
     if (!logging) return Result.error(NetwolfLoggingDisabledException());
-    return _requestRepository.addRequest(request);
+    return _repository.addRequest(request);
   }
 
   @override
-  Future<Result<NetwolfResponse, Exception>> addResponse(
-    NetwolfResponse response,
+  Future<Result<NetwolfRequest, Exception>> updateRequest(
+    Id id,
+    NetwolfRequest response,
   ) async {
     if (!logging) return Result.error(NetwolfLoggingDisabledException());
-    return _responseRepository.addResponse(response);
+    return _repository.updateRequest(id, response);
   }
 
   @override
   Future<void> clearAll() {
-    return _requestRepository.deleteAllRequests();
+    return _repository.deleteAllRequests();
   }
 }
 
@@ -160,14 +148,12 @@ class MockNetwolfController extends NetwolfController {
   // ignore: must_call_super
   Future<void> init({
     bool restoreFromPreviousSession = false,
-    RequestRepository? requestRepositoryOverride,
-    ResponseRepository? responseRepositoryOverride,
+    RequestRepository? repositoryOverride,
   }) async {
     final db = await initDb(
       restoreFromPreviousSession: restoreFromPreviousSession,
       dbPathOverride: inMemoryDatabasePath,
     );
-    _requestRepository = requestRepositoryOverride ?? RequestRepository(db);
-    _responseRepository = responseRepositoryOverride ?? ResponseRepository(db);
+    _repository = repositoryOverride ?? RequestRepository(db);
   }
 }

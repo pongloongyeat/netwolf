@@ -4,41 +4,101 @@ import 'package:netwolf/src/core/typedefs.dart';
 import 'package:netwolf/src/enums.dart';
 
 final class NetwolfRequest {
-  NetwolfRequest.uri({
-    this.id,
+  const NetwolfRequest._({
+    required this.id,
     required this.method,
     required this.uri,
-    DateTime? startTime,
-    this.headers,
-    this.body,
-  }) : startTime = startTime ?? DateTime.now();
+    required this.startTime,
+    required this.requestHeaders,
+    required this.requestBody,
+    required this.statusCode,
+    required this.endTime,
+    required this.responseHeaders,
+    required this.responseBody,
+    required this.responseTime,
+  });
 
-  NetwolfRequest.urlString({
-    this.id,
-    required this.method,
+  factory NetwolfRequest.uri({
+    Id? id,
+    required HttpRequestMethod method,
+    required Uri uri,
+    DateTime? startTime,
+    Map<String, dynamic>? requestHeaders,
+    String? requestBody,
+    int? statusCode,
+    DateTime? endTime,
+    Map<String, dynamic>? responseHeaders,
+    String? responseBody,
+  }) {
+    final effectiveStartTime = startTime ?? DateTime.now();
+    return NetwolfRequest._(
+      id: id,
+      method: method,
+      uri: uri,
+      startTime: effectiveStartTime,
+      requestHeaders: requestHeaders,
+      requestBody: requestBody,
+      statusCode: statusCode,
+      endTime: endTime,
+      responseHeaders: responseHeaders,
+      responseBody: responseBody,
+      responseTime: endTime?.difference(effectiveStartTime),
+    );
+  }
+
+  factory NetwolfRequest.urlString({
+    Id? id,
+    required HttpRequestMethod method,
     required String url,
     DateTime? startTime,
-    this.headers,
-    this.body,
-  })  : uri = Uri.parse(url),
-        startTime = startTime ?? DateTime.now();
+    Map<String, dynamic>? requestHeaders,
+    String? requestBody,
+    int? statusCode,
+    DateTime? endTime,
+    Map<String, dynamic>? responseHeaders,
+    String? responseBody,
+  }) {
+    return NetwolfRequest.uri(
+      id: id,
+      method: method,
+      uri: Uri.parse(url),
+      startTime: startTime,
+      requestHeaders: requestHeaders,
+      requestBody: requestBody,
+      statusCode: statusCode,
+      endTime: endTime,
+      responseHeaders: responseHeaders,
+      responseBody: responseBody,
+    );
+  }
 
   factory NetwolfRequest.fromDbObjectComponents({
     required Id? id,
     required String method,
     required String url,
     required String startTime,
-    required String? headers,
-    required String? body,
+    required String? requestHeaders,
+    required String? requestBody,
+    required int? statusCode,
+    required String? endTime,
+    required String? responseHeaders,
+    required String? responseBody,
   }) {
     return NetwolfRequest.urlString(
       id: id,
       method: HttpRequestMethod.parse(method),
       url: url,
       startTime: DateTime.parse(startTime),
-      headers:
-          headers != null ? jsonDecode(headers) as Map<String, dynamic> : null,
-      body: body,
+      requestHeaders: requestHeaders != null
+          ? jsonDecode(requestHeaders) as Map<String, dynamic>
+          : null,
+      requestBody: requestBody,
+      statusCode: statusCode,
+      endTime: endTime != null ? DateTime.parse(endTime) : null,
+      responseHeaders: responseHeaders != null
+          ? jsonDecode(responseHeaders) as Map<String, dynamic>
+          : null,
+      responseBody: responseBody,
     );
   }
 
@@ -48,8 +108,16 @@ final class NetwolfRequest {
       method: map['method']! as String,
       url: map['url']! as String,
       startTime: map['start_time']! as String,
-      headers: map['headers'] != null ? map['headers']! as String : null,
-      body: map['body'] as String?,
+      requestHeaders: map['request_headers'] != null
+          ? map['request_headers']! as String
+          : null,
+      requestBody: map['request_body'] as String?,
+      statusCode: map['status_code'] as int?,
+      endTime: map['end_time'] as String?,
+      responseHeaders: map['response_headers'] != null
+          ? map['response_headers']! as String
+          : null,
+      responseBody: map['response_body'] as String?,
     );
   }
 
@@ -57,35 +125,58 @@ final class NetwolfRequest {
   final HttpRequestMethod method;
   final Uri uri;
   final DateTime startTime;
-  final Map<String, dynamic>? headers;
-  final String? body;
+  final Map<String, dynamic>? requestHeaders;
+  final String? requestBody;
 
-  static String get tableName => 'REQUESTS';
+  final int? statusCode;
+  final DateTime? endTime;
+  final Map<String, dynamic>? responseHeaders;
+  final String? responseBody;
+
+  final Duration? responseTime;
+
+  static String get tableName => 'RESPONSES';
 
   NetwolfRequest copyWith({
     Id? id,
     HttpRequestMethod? method,
     Uri? uri,
     DateTime? startTime,
-    Map<String, dynamic>? headers,
-    String? body,
+    Map<String, dynamic>? requestHeaders,
+    String? requestBody,
+    int? statusCode,
+    DateTime? endTime,
+    Map<String, dynamic>? responseHeaders,
+    String? responseBody,
   }) {
     return NetwolfRequest.uri(
       id: id ?? this.id,
       method: method ?? this.method,
       uri: uri ?? this.uri,
       startTime: startTime ?? this.startTime,
-      headers: headers ?? this.headers,
-      body: body ?? this.body,
+      requestHeaders: requestHeaders ?? this.requestHeaders,
+      requestBody: requestBody ?? this.requestBody,
+      statusCode: statusCode ?? this.statusCode,
+      endTime: endTime ?? this.endTime,
+      responseHeaders: responseHeaders ?? this.responseHeaders,
+      responseBody: responseBody ?? this.responseBody,
     );
   }
 
-  Map<String, Object?> toDbObject() => {
-        'id': id,
-        'method': method.name,
-        'url': uri.toString(),
-        'start_time': startTime.toIso8601String(),
-        'headers': headers != null ? jsonEncode(headers) : null,
-        'body': body,
-      };
+  Map<String, Object?> toDbObject() {
+    return {
+      'id': id,
+      'method': method.name,
+      'url': uri.toString(),
+      'start_time': startTime.toIso8601String(),
+      'request_headers':
+          requestHeaders != null ? jsonEncode(requestHeaders) : null,
+      'request_body': requestBody,
+      'status_code': statusCode,
+      'end_time': endTime?.toIso8601String(),
+      'response_headers':
+          responseHeaders != null ? jsonEncode(responseHeaders) : null,
+      'response_body': responseBody,
+    };
+  }
 }

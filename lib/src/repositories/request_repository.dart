@@ -17,6 +17,11 @@ abstract class _RequestRepository {
 
   Future<Result<NetwolfRequest, Exception>> addRequest(NetwolfRequest request);
 
+  Future<Result<NetwolfRequest, Exception>> updateRequest(
+    Id id,
+    NetwolfRequest request,
+  );
+
   Future<Result<void, Exception>> deleteAllRequests();
 
   Future<Result<void, Exception>> deleteRequestById(Id id);
@@ -68,6 +73,24 @@ class RequestRepository extends _RequestRepository {
   }
 
   @override
+  Future<Result<NetwolfRequest, Exception>> updateRequest(
+    Id id,
+    NetwolfRequest request,
+  ) async {
+    try {
+      await db.update(
+        NetwolfRequest.tableName,
+        request.toDbObject(),
+        where: 'id = $id',
+      );
+      return Result(request);
+    } catch (e) {
+      log(e.toString());
+      return Result.error(NetwolfRecordNotFoundException());
+    }
+  }
+
+  @override
   Future<Result<void, Exception>> deleteAllRequests() async {
     await db.delete(NetwolfRequest.tableName);
     return const Result(null);
@@ -75,11 +98,16 @@ class RequestRepository extends _RequestRepository {
 
   @override
   Future<Result<void, Exception>> deleteRequestById(Id id) async {
-    await db.delete(
-      NetwolfRequest.tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    return const Result(null);
+    try {
+      await db.delete(
+        NetwolfRequest.tableName,
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      return const Result(null);
+    } catch (e) {
+      log(e.toString());
+      return Result.error(NetwolfRecordNotFoundException());
+    }
   }
 }
