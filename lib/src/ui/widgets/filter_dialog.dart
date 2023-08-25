@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/constants.dart';
-import 'package:netwolf/src/dialogs/dialogs.dart';
+import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/extensions.dart';
+import 'package:netwolf/src/ui/widgets/base_dialog.dart';
+import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class FilterDialog extends StatefulWidget {
   const FilterDialog({
     super.key,
     required this.initialRequestMethod,
     required this.initialResponseStatus,
-    required this.onClearFiltersPressed,
-    required this.onSorted,
   });
 
   final HttpRequestMethod? initialRequestMethod;
   final HttpResponseStatus? initialResponseStatus;
-  final VoidCallback onClearFiltersPressed;
-  final void Function(HttpRequestMethod?, HttpResponseStatus?) onSorted;
 
   @override
   State<FilterDialog> createState() => _FilterDialogState();
@@ -44,21 +41,15 @@ class _FilterDialogState extends State<FilterDialog> {
             value: _selectedRequestMethod,
             items: HttpRequestMethod.values,
             itemStringBuilder: (e) => e.name.toUpperCase(),
-            onChanged: (value) {
-              setState(() => _selectedRequestMethod = value);
-              widget.onSorted(_selectedRequestMethod, _selectedResponseStatus);
-            },
+            onChanged: _onRequestMethodSelected,
           ),
           _SortingField<HttpResponseStatus>(
             'By status',
             value: _selectedResponseStatus,
             items: HttpResponseStatus.values,
             itemStringBuilder: (e) => '${e.name.camelToSentenceCase()}: '
-                '${e.responseCodeStart} - ${e.responseCodeEnd}',
-            onChanged: (value) {
-              setState(() => _selectedResponseStatus = value);
-              widget.onSorted(_selectedRequestMethod, _selectedResponseStatus);
-            },
+                '${e.startRange} - ${e.endRange}',
+            onChanged: _onRequestStatusSelected,
           ),
         ],
       ),
@@ -69,14 +60,39 @@ class _FilterDialogState extends State<FilterDialog> {
               .copyWith(
             backgroundColor: MaterialStateProperty.all(kDestructiveColor),
           ),
-          onPressed: () {
-            widget.onClearFiltersPressed();
-            Navigator.of(context).pop();
-          },
+          onPressed: _onClearFiltersPressed,
           child: const Text('Clear filters'),
         ),
       ],
     );
+  }
+
+  void _onRequestMethodSelected(HttpRequestMethod? value) {
+    setState(() => _selectedRequestMethod = value);
+    NotificationDispatcher.instance.post(
+      name: NotificationName.updateFilters.name,
+      info: {
+        NotificationKey.method.name: value,
+        NotificationKey.status.name: _selectedResponseStatus,
+      },
+    );
+  }
+
+  void _onRequestStatusSelected(HttpResponseStatus? value) {
+    setState(() => _selectedResponseStatus = value);
+    NotificationDispatcher.instance.post(
+      name: NotificationName.updateFilters.name,
+      info: {
+        NotificationKey.method.name: _selectedRequestMethod,
+        NotificationKey.status.name: value,
+      },
+    );
+  }
+
+  void _onClearFiltersPressed() {
+    NotificationDispatcher.instance
+        .post(name: NotificationName.clearFilters.name);
+    Navigator.of(context).pop();
   }
 }
 
@@ -104,7 +120,7 @@ class _SortingField<T extends Object> extends StatelessWidget {
             label,
             overflow: TextOverflow.ellipsis,
             maxLines: 999,
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
         const SizedBox(width: 16),
@@ -119,7 +135,7 @@ class _SortingField<T extends Object> extends StatelessWidget {
                     value: e,
                     child: Text(
                       itemStringBuilder?.call(e) ?? e.toString(),
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
                 )

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:netwolf/netwolf.dart';
 import 'package:netwolf/src/constants.dart';
+import 'package:netwolf/src/enums.dart';
 
 extension StringX on String {
   String toTitleCase() {

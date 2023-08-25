@@ -13,6 +13,8 @@ class SectionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final content = this.content;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -23,13 +25,16 @@ class SectionListItem extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
             IconButton(
               icon: const Icon(Icons.copy),
               visualDensity: VisualDensity.compact,
-              onPressed: () => Clipboard.setData(ClipboardData(text: content)),
+              onPressed: content != null
+                  ? () => Clipboard.setData(ClipboardData(text: content))
+                      .then((_) => _showCopiedSnackbar(context))
+                  : null,
             ),
           ],
         ),
@@ -45,11 +50,17 @@ class SectionListItem extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: SelectableText(
               content ?? '',
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
         ),
       ],
+    );
+  }
+
+  void _showCopiedSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Copied to clipboard')),
     );
   }
 }

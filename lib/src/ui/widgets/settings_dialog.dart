@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/constants.dart';
-import 'package:netwolf/src/dialogs/dialogs.dart';
+import 'package:netwolf/src/core/netwolf_controller.dart';
+import 'package:netwolf/src/enums.dart';
+import 'package:netwolf/src/ui/widgets/base_dialog.dart';
+import 'package:notification_dispatcher/notification_dispatcher.dart';
 
-class SettingsDialog extends StatelessWidget {
+class SettingsDialog extends StatefulWidget {
   const SettingsDialog({
     super.key,
-    required this.logging,
-    required this.onClearDataPressed,
-    required this.onLoggingChanged,
   });
 
-  final bool logging;
-  final VoidCallback onClearDataPressed;
-  final ValueChanged<bool> onLoggingChanged;
+  @override
+  State<SettingsDialog> createState() => _SettingsDialogState();
+}
 
+class _SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext context) {
     return BaseDialog(
@@ -34,7 +35,7 @@ class SettingsDialog extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
         child,
@@ -47,8 +48,12 @@ class SettingsDialog extends StatelessWidget {
       context,
       label: 'Logging',
       child: Switch.adaptive(
-        value: logging,
-        onChanged: onLoggingChanged,
+        value: NetwolfController.instance.logging,
+        onChanged: (value) {
+          setState(() {
+            NetwolfController.instance.setLogging(value);
+          });
+        },
       ),
     );
   }
@@ -56,10 +61,7 @@ class SettingsDialog extends StatelessWidget {
   List<ElevatedButton> _buildButtons(BuildContext context) {
     return [
       ElevatedButton(
-        onPressed: () {
-          onClearDataPressed();
-          Navigator.of(context).pop();
-        },
+        onPressed: _onClearDataPressed,
         style: (Theme.of(context).elevatedButtonTheme.style ??
                 ElevatedButton.styleFrom())
             .copyWith(
@@ -77,5 +79,14 @@ class SettingsDialog extends StatelessWidget {
         style: TextStyle(fontWeight: FontWeight.w300),
       ),
     );
+  }
+
+  void _onClearDataPressed() {
+    NetwolfController.instance.clearAll().then((_) {
+      NotificationDispatcher.instance.post(
+        name: NotificationName.refetchRequests.name,
+      );
+      Navigator.of(context).pop();
+    });
   }
 }

@@ -1,13 +1,19 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:netwolf/netwolf.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NetwolfController.instance.init();
+  final navigatorKey = GlobalKey<NavigatorState>();
+
   runApp(
-    const MaterialApp(
-      home: NetwolfWidget(
-        child: HomePage(),
+    MaterialApp(
+      builder: (context, child) => NetwolfWidget(
+        navigatorKey: navigatorKey,
+        child: child ?? Container(),
       ),
+      navigatorKey: navigatorKey,
+      home: const HomePage(),
     ),
   );
 }
@@ -34,33 +40,50 @@ class HomePage extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Dio()
-                        ..interceptors.add(NetwolfDioInterceptor())
-                        ..get('https://pokeapi.co/api/v2/pokemon-form/132/');
+                      NetwolfController.instance.addRequest(
+                        NetwolfRequest.urlString(
+                          method: HttpRequestMethod.get,
+                          url: 'https://pokeapi.co/api/v2/pokemon-form/132/',
+                          requestHeaders: {
+                            'a': 1,
+                          },
+                        ),
+                      );
                     },
                     child: const Text('Test API #1'),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Dio()
-                        ..interceptors.add(NetwolfDioInterceptor())
-                        ..get('https://api.ipify.org?format=json');
+                      NetwolfController.instance.addRequest(
+                        NetwolfRequest.urlString(
+                          method: HttpRequestMethod.get,
+                          url: 'https://api.ipify.org?format=json',
+                          endTime: DateTime.now(),
+                          statusCode: 200,
+                        ),
+                      );
                     },
                     child: const Text('Test API #2'),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Dio()
-                        ..interceptors.add(NetwolfDioInterceptor())
-                        ..put('https://pokeapi.co/api/v2/pokemon-form/132/');
+                      NetwolfController.instance.addRequest(
+                        NetwolfRequest.urlString(
+                          method: HttpRequestMethod.get,
+                          url: 'https://pokeapi.co/api/v2/pokemon-form/132/',
+                        ),
+                      );
                     },
                     child: const Text('Test failed API #1'),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Dio()
-                        ..interceptors.add(NetwolfDioInterceptor())
-                        ..post('https://api.ipify.org?format=json');
+                      NetwolfController.instance.addRequest(
+                        NetwolfRequest.urlString(
+                          method: HttpRequestMethod.get,
+                          url: 'https://api.ipify.org?format=json',
+                        ),
+                      );
                     },
                     child: const Text('Test failed API #2'),
                   ),
