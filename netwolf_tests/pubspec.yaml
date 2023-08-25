@@ -11,8 +11,6 @@ dependencies:
     sdk: flutter
   netwolf:
     path: ../netwolf
-  netwolf_core:
-    path: ../netwolf_core
   sqflite: ^2.3.0
 
 dev_dependencies:
