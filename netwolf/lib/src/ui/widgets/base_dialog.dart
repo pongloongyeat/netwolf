@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:netwolf/src/extensions.dart';
+import 'package:netwolf/src/core/extensions.dart';
 
 class BaseDialog extends StatelessWidget {
   const BaseDialog({

@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:netwolf/src/controller.dart';
-import 'package:netwolf/src/enums.dart';
+import 'package:netwolf/src/core/enums.dart';
+import 'package:netwolf/src/core/netwolf_controller.dart';
 import 'package:netwolf/src/ui/pages/netwolf_landing_page.dart';
 import 'package:netwolf/src/ui/widgets/serial_gesture_detector.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';

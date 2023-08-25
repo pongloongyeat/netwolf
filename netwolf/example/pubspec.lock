@@ -122,13 +122,6 @@ packages:
       relative: true
     source: path
     version: "0.3.0"
-  netwolf_core:
-    dependency: transitive
-    description:
-      path: "../../netwolf_core"
-      relative: true
-    source: path
-    version: "1.0.0"
   notification_dispatcher:
     dependency: transitive
     description:

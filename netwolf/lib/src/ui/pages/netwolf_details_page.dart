@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:netwolf/src/constants.dart';
-import 'package:netwolf/src/controller.dart';
-import 'package:netwolf/src/extensions.dart';
+import 'package:netwolf/src/core/constants.dart';
+import 'package:netwolf/src/core/extensions.dart';
+import 'package:netwolf/src/core/netwolf_controller.dart';
+import 'package:netwolf/src/core/typedefs.dart';
+import 'package:netwolf/src/models/netwolf_request.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_app_bar.dart';
 import 'package:netwolf/src/ui/widgets/section_list_item.dart';
-import 'package:netwolf_core/netwolf_core.dart';
 
 enum _RequestDetailsTab { info, request, response }
 
