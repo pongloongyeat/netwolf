@@ -19,6 +19,6 @@ dev_dependencies:
   collection: ^1.17.1
   flutter_test:
     sdk: flutter
+  lint: ^2.1.2
   mocktail: ^1.0.0
   sqflite_common_ffi: ^2.3.0+2
-  very_good_analysis: ^5.0.0+1
