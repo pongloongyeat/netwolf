@@ -8,7 +8,7 @@ import 'package:netwolf/src/repositories/request_repository.dart';
 
 import '../../init.dart';
 
-class _MockRequestRepository extends Mock implements RequestRepository {}
+final class _MockRequestRepository extends Mock implements RequestRepository {}
 
 void main() {
   initMockDb();
