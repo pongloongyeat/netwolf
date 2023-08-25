@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netwolf/src/core/netwolf_controller.dart';
-import 'package:netwolf/src/enums.dart';
-import 'package:netwolf/src/models/netwolf_request.dart';
-import 'package:netwolf/src/repositories/request_repository.dart';
+import 'package:netwolf_core/src/core/enums.dart';
+import 'package:netwolf_core/src/core/netwolf_controller.dart';
+import 'package:netwolf_core/src/models/netwolf_request.dart';
+import 'package:netwolf_core/src/repositories/request_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../init.dart';
