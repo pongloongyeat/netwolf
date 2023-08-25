@@ -6,31 +6,11 @@ import 'package:netwolf_core/src/models/netwolf_request.dart';
 import 'package:netwolf_core/src/models/result.dart';
 import 'package:sqflite/sqflite.dart';
 
-abstract class _RequestRepository {
-  const _RequestRepository(this.db);
+class RequestRepository {
+  RequestRepository(this.db);
 
   final Database db;
 
-  Future<Result<List<NetwolfRequest>, Exception>> getRequests();
-
-  Future<Result<NetwolfRequest, Exception>> getRequestById(Id id);
-
-  Future<Result<NetwolfRequest, Exception>> addRequest(NetwolfRequest request);
-
-  Future<Result<NetwolfRequest, Exception>> updateRequest(
-    Id id,
-    NetwolfRequest request,
-  );
-
-  Future<Result<void, Exception>> deleteAllRequests();
-
-  Future<Result<void, Exception>> deleteRequestById(Id id);
-}
-
-class RequestRepository extends _RequestRepository {
-  RequestRepository(super.db);
-
-  @override
   Future<Result<List<NetwolfRequest>, Exception>> getRequests() async {
     final query = await db.query(
       NetwolfRequest.tableName,
@@ -52,7 +32,6 @@ class RequestRepository extends _RequestRepository {
     }
   }
 
-  @override
   Future<Result<NetwolfRequest, Exception>> getRequestById(Id id) async {
     final query = await db.query(
       NetwolfRequest.tableName,
@@ -71,7 +50,6 @@ class RequestRepository extends _RequestRepository {
     }
   }
 
-  @override
   Future<Result<NetwolfRequest, Exception>> addRequest(
     NetwolfRequest request,
   ) async {
@@ -79,7 +57,6 @@ class RequestRepository extends _RequestRepository {
     return Result(request.copyWith(id: id));
   }
 
-  @override
   Future<Result<NetwolfRequest, Exception>> updateRequest(
     Id id,
     NetwolfRequest request,
@@ -88,7 +65,8 @@ class RequestRepository extends _RequestRepository {
       await db.update(
         NetwolfRequest.tableName,
         request.toDbObject(),
-        where: 'id = $id',
+        where: 'id = ?',
+        whereArgs: [id],
       );
       return Result(request);
     } catch (e) {
@@ -97,13 +75,11 @@ class RequestRepository extends _RequestRepository {
     }
   }
 
-  @override
   Future<Result<void, Exception>> deleteAllRequests() async {
     await db.delete(NetwolfRequest.tableName);
     return const Result(null);
   }
 
-  @override
   Future<Result<void, Exception>> deleteRequestById(Id id) async {
     try {
       await db.delete(
