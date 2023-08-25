@@ -9,7 +9,6 @@ environment:
 dependencies:
   collection: ^1.17.1
   meta: ^1.9.1
-  notification_dispatcher: ^0.4.0
   sqflite: ^2.3.0
 
 dev_dependencies:

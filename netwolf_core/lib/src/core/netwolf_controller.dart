@@ -1,13 +1,12 @@
 import 'package:meta/meta.dart';
-import 'package:netwolf_core/src/core/enums.dart';
 import 'package:netwolf_core/src/core/exceptions.dart';
 import 'package:netwolf_core/src/core/typedefs.dart';
 import 'package:netwolf_core/src/models/netwolf_request.dart';
 import 'package:netwolf_core/src/models/result.dart';
 import 'package:netwolf_core/src/repositories/request_repository.dart';
-import 'package:notification_dispatcher/notification_dispatcher.dart';
 import 'package:sqflite/sqflite.dart';
 
+@visibleForTesting
 Future<Database> initDb({
   required bool restoreFromPreviousSession,
   required String? dbPathOverride,
@@ -45,7 +44,7 @@ CREATE TABLE IF NOT EXISTS ${NetwolfRequest.tableName} (
   );
 }
 
-abstract class _NetwolfController {
+abstract class BaseNetwolfController {
   late RequestRepository _repository;
 
   /// Initialises the controller and any needed tables.
@@ -59,38 +58,6 @@ abstract class _NetwolfController {
     );
     _repository = RequestRepository(db);
   }
-
-  /// Shows the Netwolf overlay, if enabled.
-  void show();
-
-  /// Gets all stored requests.
-  Future<Result<List<NetwolfRequest>, Exception>> getRequests();
-
-  /// Gets a specific request.
-  Future<Result<NetwolfRequest, Exception>> getRequestById(Id id);
-
-  /// Adds a request to Netwolf. Returns the ID of the added request.
-  Future<Result<NetwolfRequest, Exception>> addRequest(
-    NetwolfRequest request,
-  );
-
-  /// Updates an existing request. If the request was not found, a
-  /// [NetwolfRecordNotFoundException] will be returned. Otherwise,
-  /// this simply returns the updated response.
-  Future<Result<NetwolfRequest, Exception>> updateRequest(
-    Id id,
-    NetwolfRequest response,
-  );
-
-  /// Clears all current responses.
-  void clearAll();
-}
-
-class NetwolfController extends _NetwolfController {
-  @visibleForTesting
-  NetwolfController();
-
-  static final instance = NetwolfController();
 
   bool _logging = true;
 
@@ -113,22 +80,20 @@ class NetwolfController extends _NetwolfController {
     _logging = value;
   }
 
-  @override
-  void show() {
-    NotificationDispatcher.instance.post(name: NotificationName.show.name);
-  }
+  /// Shows the Netwolf overlay, if enabled.
+  void show();
 
-  @override
-  Future<Result<List<NetwolfRequest>, Exception>> getRequests() async {
+  /// Gets all stored requests.
+  Future<Result<List<NetwolfRequest>, Exception>> getRequests() {
     return _repository.getRequests();
   }
 
-  @override
-  Future<Result<NetwolfRequest, Exception>> getRequestById(Id id) async {
+  /// Gets a specific request.
+  Future<Result<NetwolfRequest, Exception>> getRequestById(Id id) {
     return _repository.getRequestById(id);
   }
 
-  @override
+  /// Adds a request to Netwolf. Returns the ID of the added request.
   Future<Result<NetwolfRequest, Exception>> addRequest(
     NetwolfRequest request,
   ) async {
@@ -136,7 +101,9 @@ class NetwolfController extends _NetwolfController {
     return _repository.addRequest(request);
   }
 
-  @override
+  /// Updates an existing request. If the request was not found, a
+  /// [NetwolfRecordNotFoundException] will be returned. Otherwise,
+  /// this simply returns the updated response.
   Future<Result<NetwolfRequest, Exception>> updateRequest(
     Id id,
     NetwolfRequest response,
@@ -145,14 +112,14 @@ class NetwolfController extends _NetwolfController {
     return _repository.updateRequest(id, response);
   }
 
-  @override
+  /// Clears all current responses.
   Future<void> clearAll() {
     return _repository.deleteAllRequests();
   }
 }
 
 @visibleForTesting
-class MockNetwolfController extends NetwolfController {
+class MockNetwolfController extends BaseNetwolfController {
   @visibleForTesting
   MockNetwolfController();
 
@@ -170,4 +137,7 @@ class MockNetwolfController extends NetwolfController {
     );
     _repository = repositoryOverride ?? RequestRepository(db);
   }
+
+  @override
+  void show() {}
 }

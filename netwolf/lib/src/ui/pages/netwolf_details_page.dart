@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/constants.dart';
+import 'package:netwolf/src/controller.dart';
 import 'package:netwolf/src/extensions.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_app_bar.dart';
 import 'package:netwolf/src/ui/widgets/section_list_item.dart';
