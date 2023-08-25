@@ -1,5 +1,4 @@
-export 'src/core/netwolf_controller.dart' hide initDb;
-export 'src/enums.dart' hide NotificationKey;
-export 'src/models/netwolf_request.dart';
-export 'src/models/result.dart';
+export 'package:netwolf_core/netwolf_core.dart'
+    hide NotificationKey, NotificationName;
+
 export 'src/ui/pages/netwolf_widget.dart' hide showCustomModalBottomSheet;

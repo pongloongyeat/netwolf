@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/ui/widgets/filter_dialog.dart';
+import 'package:netwolf_core/netwolf_core.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class NetwolfSearchBar extends StatelessWidget {

@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:netwolf/src/core/exceptions.dart';
-import 'package:netwolf/src/core/typedefs.dart';
-import 'package:netwolf/src/models/netwolf_request.dart';
-import 'package:netwolf/src/models/result.dart';
+import 'package:netwolf_core/src/core/exceptions.dart';
+import 'package:netwolf_core/src/core/typedefs.dart';
+import 'package:netwolf_core/src/models/netwolf_request.dart';
+import 'package:netwolf_core/src/models/result.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class _RequestRepository {

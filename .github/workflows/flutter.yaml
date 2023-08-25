@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./netwolf
+        working-directory: ./netwolf_tests
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10.0'
-          channel: 'stable'
+          flutter-version: "3.10.0"
+          channel: "stable"
       - name: Install dependencies
         run: flutter pub get
       - name: Check formatting

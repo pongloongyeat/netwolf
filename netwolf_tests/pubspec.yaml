@@ -1,0 +1,24 @@
+name: netwolf_tests
+description: A new Flutter package project.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  netwolf:
+    path: ../netwolf
+  netwolf_core:
+    path: ../netwolf_core
+  sqflite: ^2.3.0
+
+dev_dependencies:
+  collection: ^1.17.1
+  flutter_test:
+    sdk: flutter
+  lint: ^2.1.2
+  mocktail: ^1.0.0
+  sqflite_common_ffi: ^2.3.0+2

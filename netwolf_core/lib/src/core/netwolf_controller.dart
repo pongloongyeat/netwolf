@@ -1,14 +1,13 @@
-import 'package:flutter/foundation.dart';
-import 'package:netwolf/src/core/exceptions.dart';
-import 'package:netwolf/src/core/typedefs.dart';
-import 'package:netwolf/src/enums.dart';
-import 'package:netwolf/src/models/netwolf_request.dart';
-import 'package:netwolf/src/models/result.dart';
-import 'package:netwolf/src/repositories/request_repository.dart';
+import 'package:meta/meta.dart';
+import 'package:netwolf_core/src/core/enums.dart';
+import 'package:netwolf_core/src/core/exceptions.dart';
+import 'package:netwolf_core/src/core/typedefs.dart';
+import 'package:netwolf_core/src/models/netwolf_request.dart';
+import 'package:netwolf_core/src/models/result.dart';
+import 'package:netwolf_core/src/repositories/request_repository.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 import 'package:sqflite/sqflite.dart';
 
-@visibleForTesting
 Future<Database> initDb({
   required bool restoreFromPreviousSession,
   required String? dbPathOverride,
