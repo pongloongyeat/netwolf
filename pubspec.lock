@@ -58,7 +58,7 @@ packages:
     source: hosted
     version: "1.1.1"
   collection:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: collection
       sha256: "4a07be6cb69c84d677a6c3096fcf960cc3285a8330b4603e0d463d15d9bd934c"
@@ -231,10 +231,10 @@ packages:
     dependency: "direct main"
     description:
       name: notification_dispatcher
-      sha256: "23ec6dceb0b0acf239b95444eb73433323c88043ec32096eed3383191c26e816"
+      sha256: "2e97603d4cf6b1ffd84b2a057985d6021d3a790c35ad936be447cbc57a0ad3cd"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.0"
+    version: "0.4.0"
   package_config:
     dependency: transitive
     description:
@@ -444,10 +444,10 @@ packages:
     dependency: "direct dev"
     description:
       name: very_good_analysis
-      sha256: "88868b04c9dc5254e11a3c979b3a83740bd92f6ab2b31e4e5f0277ec130913cd"
+      sha256: "5e4ea72d2a9188630f0dd8f120a541de730090ef8863243fedca8267a84508b8"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.2"
+    version: "5.0.0+1"
   vm_service:
     dependency: transitive
     description:
@@ -490,4 +490,4 @@ packages:
     version: "3.1.2"
 sdks:
   dart: ">=3.0.0 <4.0.0"
-  flutter: ">=3.10.0"
+  flutter: ">=3.3.0"

@@ -126,10 +126,10 @@ packages:
     dependency: transitive
     description:
       name: notification_dispatcher
-      sha256: "23ec6dceb0b0acf239b95444eb73433323c88043ec32096eed3383191c26e816"
+      sha256: "2e97603d4cf6b1ffd84b2a057985d6021d3a790c35ad936be447cbc57a0ad3cd"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.0"
+    version: "0.4.0"
   path:
     dependency: transitive
     description:
@@ -225,4 +225,4 @@ packages:
     version: "2.1.4"
 sdks:
   dart: ">=3.0.0 <4.0.0"
-  flutter: ">=3.10.0"
+  flutter: ">=3.3.0"

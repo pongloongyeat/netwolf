@@ -67,39 +67,39 @@ void main() {
 
     test('calls the correct repository methods', () async {
       final controller = MockNetwolfController();
-      final _repository = _MockRequestRepository();
-      await controller.init(repositoryOverride: _repository);
+      final repository = _MockRequestRepository();
+      await controller.init(repositoryOverride: repository);
 
       final mockRequest = NetwolfRequest.uri(
         method: HttpRequestMethod.get,
         uri: Uri(),
       );
 
-      when(_repository.getRequests)
+      when(repository.getRequests)
           .thenAnswer((_) async => Result([mockRequest]));
-      when(() => _repository.getRequestById(any()))
+      when(() => repository.getRequestById(any()))
           .thenAnswer((_) async => Result(mockRequest));
-      when(() => _repository.addRequest(mockRequest))
+      when(() => repository.addRequest(mockRequest))
           .thenAnswer((_) async => Result(mockRequest));
-      when(() => _repository.updateRequest(any(), mockRequest))
+      when(() => repository.updateRequest(any(), mockRequest))
           .thenAnswer((_) async => Result(mockRequest));
-      when(_repository.deleteAllRequests)
+      when(repository.deleteAllRequests)
           .thenAnswer((_) async => const Result(null));
 
       await controller.getRequests();
-      verify(_repository.getRequests).called(1);
+      verify(repository.getRequests).called(1);
 
       await controller.getRequestById(Random().nextInt(100));
-      verify(() => _repository.getRequestById(any())).called(1);
+      verify(() => repository.getRequestById(any())).called(1);
 
       await controller.addRequest(mockRequest);
-      verify(() => _repository.addRequest(mockRequest)).called(1);
+      verify(() => repository.addRequest(mockRequest)).called(1);
 
       await controller.updateRequest(Random().nextInt(100), mockRequest);
-      verify(() => _repository.updateRequest(any(), mockRequest)).called(1);
+      verify(() => repository.updateRequest(any(), mockRequest)).called(1);
 
       await controller.clearAll();
-      verify(_repository.deleteAllRequests).called(1);
+      verify(repository.deleteAllRequests).called(1);
     });
   });
 }
