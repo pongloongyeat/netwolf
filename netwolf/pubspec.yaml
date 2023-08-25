@@ -13,6 +13,7 @@ dependencies:
   netwolf_core:
     path: ../netwolf_core
   notification_dispatcher: ^0.4.0
+  sqflite: ^2.3.0
 
 dev_dependencies:
   lint: ^2.1.2
