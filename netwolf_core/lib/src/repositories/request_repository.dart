@@ -4,7 +4,7 @@ import 'package:netwolf_core/src/core/exceptions.dart';
 import 'package:netwolf_core/src/core/typedefs.dart';
 import 'package:netwolf_core/src/models/netwolf_request.dart';
 import 'package:netwolf_core/src/models/result.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common/sqflite.dart';
 
 abstract class _RequestRepository {
   const _RequestRepository(this.db);

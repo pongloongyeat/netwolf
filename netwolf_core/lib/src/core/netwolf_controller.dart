@@ -4,7 +4,7 @@ import 'package:netwolf_core/src/core/typedefs.dart';
 import 'package:netwolf_core/src/models/netwolf_request.dart';
 import 'package:netwolf_core/src/models/result.dart';
 import 'package:netwolf_core/src/repositories/request_repository.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common/sqflite.dart';
 
 @visibleForTesting
 Future<Database> initDb({
