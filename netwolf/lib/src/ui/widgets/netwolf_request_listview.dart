@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/constants.dart';
+import 'package:netwolf/src/controller.dart';
+import 'package:netwolf/src/enums.dart';
 import 'package:netwolf/src/extensions.dart';
 import 'package:netwolf/src/ui/pages/netwolf_details_page.dart';
 import 'package:netwolf_core/netwolf_core.dart';
