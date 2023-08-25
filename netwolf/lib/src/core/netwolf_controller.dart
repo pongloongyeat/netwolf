@@ -1,9 +1,12 @@
-import 'package:meta/meta.dart';
-import 'package:netwolf_core/src/core/exceptions.dart';
-import 'package:netwolf_core/src/core/typedefs.dart';
-import 'package:netwolf_core/src/models/netwolf_request.dart';
-import 'package:netwolf_core/src/models/result.dart';
-import 'package:netwolf_core/src/repositories/request_repository.dart';
+import 'package:flutter/foundation.dart';
+import 'package:netwolf/src/core/enums.dart';
+import 'package:netwolf/src/core/exceptions.dart';
+import 'package:netwolf/src/core/typedefs.dart';
+import 'package:netwolf/src/models/netwolf_request.dart';
+import 'package:netwolf/src/models/result.dart';
+import 'package:netwolf/src/repositories/request_repository.dart';
+import 'package:notification_dispatcher/notification_dispatcher.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 @visibleForTesting
@@ -11,7 +14,7 @@ Future<Database> initDb({
   required bool restoreFromPreviousSession,
   required String? dbPathOverride,
 }) async {
-  final path = dbPathOverride ?? '${await getDatabasesPath()}/netwolf.db';
+  final path = dbPathOverride ?? join(await getDatabasesPath(), 'netwolf.db');
 
   if (!restoreFromPreviousSession &&
       dbPathOverride == null &&
@@ -119,7 +122,7 @@ abstract class BaseNetwolfController {
 }
 
 @visibleForTesting
-class MockNetwolfController extends BaseNetwolfController {
+final class MockNetwolfController extends BaseNetwolfController {
   @visibleForTesting
   MockNetwolfController();
 
@@ -140,4 +143,15 @@ class MockNetwolfController extends BaseNetwolfController {
 
   @override
   void show() {}
+}
+
+final class NetwolfController extends BaseNetwolfController {
+  NetwolfController._();
+
+  static final instance = NetwolfController._();
+
+  @override
+  void show() {
+    NotificationDispatcher.instance.post(name: NotificationName.show.name);
+  }
 }

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:netwolf/src/constants.dart';
-import 'package:netwolf/src/enums.dart';
-import 'package:netwolf/src/extensions.dart';
+import 'package:netwolf/src/core/constants.dart';
+import 'package:netwolf/src/core/enums.dart';
+import 'package:netwolf/src/core/extensions.dart';
 import 'package:netwolf/src/ui/widgets/base_dialog.dart';
-import 'package:netwolf_core/netwolf_core.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class FilterDialog extends StatefulWidget {

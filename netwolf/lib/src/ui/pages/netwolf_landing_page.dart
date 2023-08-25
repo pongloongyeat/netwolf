@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:netwolf/src/constants.dart';
+import 'package:netwolf/src/core/constants.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_app_bar.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_request_listview.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_search_bar.dart';

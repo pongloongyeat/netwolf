@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:netwolf/src/constants.dart';
-import 'package:netwolf/src/controller.dart';
-import 'package:netwolf/src/enums.dart';
-import 'package:netwolf/src/extensions.dart';
+import 'package:netwolf/src/core/constants.dart';
+import 'package:netwolf/src/core/enums.dart';
+import 'package:netwolf/src/core/extensions.dart';
+import 'package:netwolf/src/core/netwolf_controller.dart';
+import 'package:netwolf/src/models/netwolf_request.dart';
 import 'package:netwolf/src/ui/pages/netwolf_details_page.dart';
-import 'package:netwolf_core/netwolf_core.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class NetwolfRequestListView extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:netwolf_core/src/core/enums.dart';
-import 'package:netwolf_core/src/core/typedefs.dart';
+import 'package:netwolf/src/core/enums.dart';
+import 'package:netwolf/src/core/typedefs.dart';
 
 final class NetwolfRequest {
   const NetwolfRequest._({
