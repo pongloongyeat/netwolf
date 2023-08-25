@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:netwolf/src/core/typedefs.dart';
 import 'package:netwolf/src/enums.dart';
 
-final class NetwolfRequest {
+class NetwolfRequest {
   const NetwolfRequest._({
     required this.id,
     required this.method,

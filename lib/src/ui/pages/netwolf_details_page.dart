@@ -6,6 +6,7 @@ import 'package:netwolf/src/core/netwolf_controller.dart';
 import 'package:netwolf/src/core/typedefs.dart';
 import 'package:netwolf/src/extensions.dart';
 import 'package:netwolf/src/models/netwolf_request.dart';
+import 'package:netwolf/src/models/result.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_app_bar.dart';
 import 'package:netwolf/src/ui/widgets/section_list_item.dart';
 
@@ -25,7 +26,7 @@ class NetwolfDetailsPage extends StatelessWidget {
       length: _RequestDetailsTab.values.length,
       child: Scaffold(
         appBar: _buildAppBar(),
-        body: FutureBuilder(
+        body: FutureBuilder<Result<NetwolfRequest, Exception>>(
           future: NetwolfController.instance.getRequestById(requestId),
           builder: (context, snapshot) {
             final result = snapshot.data;
