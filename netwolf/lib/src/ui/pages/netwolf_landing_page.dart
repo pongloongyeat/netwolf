@@ -67,6 +67,8 @@ class _NetwolfLandingPageState extends State<NetwolfLandingPage> {
             Padding(
               padding: kDefaultPadding.copyWith(top: 0, bottom: 0),
               child: NetwolfSearchBar(
+                initialRequestMethod: _method,
+                initialResponseStatus: _status,
                 onSearchChanged: _onSearchTermChanged,
                 onFilterChanged: _onUpdateFilters,
                 onFiltersCleared: _onClearFilters,

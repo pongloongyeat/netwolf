@@ -5,11 +5,15 @@ import 'package:netwolf/src/ui/widgets/filter_dialog.dart';
 class NetwolfSearchBar extends StatelessWidget {
   const NetwolfSearchBar({
     super.key,
+    required this.initialRequestMethod,
+    required this.initialResponseStatus,
     required this.onSearchChanged,
     required this.onFilterChanged,
     required this.onFiltersCleared,
   });
 
+  final HttpRequestMethod? initialRequestMethod;
+  final HttpResponseStatus? initialResponseStatus;
   final ValueChanged<String> onSearchChanged;
   final OnFilterChanged onFilterChanged;
   final VoidCallback onFiltersCleared;
@@ -24,6 +28,8 @@ class NetwolfSearchBar extends StatelessWidget {
           ),
         ),
         _FilterButton(
+          initialRequestMethod: initialRequestMethod,
+          initialResponseStatus: initialResponseStatus,
           onFilterChanged: onFilterChanged,
           onFiltersCleared: onFiltersCleared,
         ),
@@ -34,10 +40,14 @@ class NetwolfSearchBar extends StatelessWidget {
 
 class _FilterButton extends StatefulWidget {
   const _FilterButton({
+    required this.initialRequestMethod,
+    required this.initialResponseStatus,
     required this.onFilterChanged,
     required this.onFiltersCleared,
   });
 
+  final HttpRequestMethod? initialRequestMethod;
+  final HttpResponseStatus? initialResponseStatus;
   final OnFilterChanged onFilterChanged;
   final VoidCallback onFiltersCleared;
 
@@ -46,9 +56,6 @@ class _FilterButton extends StatefulWidget {
 }
 
 class _FilterButtonState extends State<_FilterButton> {
-  HttpRequestMethod? _method;
-  HttpResponseStatus? _status;
-
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -56,8 +63,8 @@ class _FilterButtonState extends State<_FilterButton> {
       onPressed: () => showDialog<void>(
         context: context,
         builder: (_) => FilterDialog(
-          initialRequestMethod: _method,
-          initialResponseStatus: _status,
+          initialRequestMethod: widget.initialRequestMethod,
+          initialResponseStatus: widget.initialResponseStatus,
           onFilterChanged: _onFiltersUpdated,
           onFiltersCleared: _onFiltersCleared,
         ),
@@ -69,9 +76,6 @@ class _FilterButtonState extends State<_FilterButton> {
     HttpRequestMethod? method,
     HttpResponseStatus? status,
   ) {
-    _method = method;
-    _status = status;
-
     widget.onFilterChanged(method, status);
   }
 
