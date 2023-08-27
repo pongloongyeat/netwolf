@@ -208,6 +208,20 @@ final class NetwolfRequest {
     );
   }
 
+  NetwolfRequest completeRequest({
+    int? statusCode,
+    DateTime? endTime,
+    Map<String, dynamic>? responseHeaders,
+    String? responseBody,
+  }) {
+    return copyWith(
+      statusCode: statusCode,
+      endTime: endTime ?? DateTime.now(),
+      responseHeaders: responseHeaders,
+      responseBody: responseBody,
+    );
+  }
+
   DbObject toDbObject({bool withId = true}) {
     return {
       if (withId) NetwolfRequestDbObjectKeys.id.name: id,
