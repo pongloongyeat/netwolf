@@ -165,4 +165,40 @@ final class NetwolfController extends BaseNetwolfController {
   void show() {
     NotificationDispatcher.instance.post(name: NotificationName.show.name);
   }
+
+  @override
+  Future<Result<NetwolfRequest, NetwolfException>> addRequest(
+    NetwolfRequest request,
+  ) async {
+    final result = await super.addRequest(request);
+    if (result.hasError) return result;
+
+    NotificationDispatcher.instance.post(
+      name: NotificationName.refetchRequests.name,
+    );
+    return result;
+  }
+
+  @override
+  Future<Result<NetwolfRequest, NetwolfException>> completeRequest(
+    NetwolfRequest request, {
+    int? statusCode,
+    DateTime? endTime,
+    Map<String, dynamic>? responseHeaders,
+    String? responseBody,
+  }) async {
+    final result = await super.completeRequest(
+      request,
+      statusCode: statusCode,
+      endTime: endTime,
+      responseHeaders: responseHeaders,
+      responseBody: responseBody,
+    );
+    if (result.hasError) return result;
+
+    NotificationDispatcher.instance.post(
+      name: NotificationName.refetchRequests.name,
+    );
+    return result;
+  }
 }
