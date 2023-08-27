@@ -273,12 +273,13 @@ class _StatusChip extends StatelessWidget {
     required this.completed,
   });
 
-  final int statusCode;
+  final int? statusCode;
   final bool completed;
 
   @override
   Widget build(BuildContext context) {
     final status = HttpResponseStatus.fromResponseCode(statusCode);
+    final code = statusCode == null ? 'Unknown' : '$statusCode';
 
     return Container(
       decoration: BoxDecoration(
@@ -290,7 +291,7 @@ class _StatusChip extends StatelessWidget {
         vertical: 6,
       ),
       child: Text(
-        completed ? '$statusCode' : 'Pending',
+        completed ? code : 'Pending',
         style: Theme.of(context)
             .textTheme
             .bodySmall
