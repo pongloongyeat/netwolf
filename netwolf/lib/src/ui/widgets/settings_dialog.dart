@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/constants.dart';
-import 'package:netwolf/src/core/enums.dart';
 import 'package:netwolf/src/core/netwolf_controller.dart';
 import 'package:netwolf/src/ui/widgets/base_dialog.dart';
-import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class SettingsDialog extends StatefulWidget {
   const SettingsDialog({
     super.key,
+    required this.onClearDataPressed,
   });
+
+  final VoidCallback onClearDataPressed;
 
   @override
   State<SettingsDialog> createState() => _SettingsDialogState();
@@ -83,9 +84,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
 
   void _onClearDataPressed() {
     NetwolfController.instance.clearAll().then((_) {
-      NotificationDispatcher.instance.post(
-        name: NotificationName.refetchRequests.name,
-      );
+      widget.onClearDataPressed();
       Navigator.of(context).pop();
     });
   }

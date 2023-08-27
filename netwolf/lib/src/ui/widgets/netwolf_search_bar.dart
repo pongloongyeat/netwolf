@@ -1,24 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/enums.dart';
 import 'package:netwolf/src/ui/widgets/filter_dialog.dart';
-import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class NetwolfSearchBar extends StatelessWidget {
-  const NetwolfSearchBar({super.key});
+  const NetwolfSearchBar({
+    super.key,
+    required this.onSearchChanged,
+    required this.onFilterChanged,
+    required this.onFiltersCleared,
+  });
+
+  final ValueChanged<String> onSearchChanged;
+  final OnFilterChanged onFilterChanged;
+  final VoidCallback onFiltersCleared;
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       children: [
-        Expanded(child: _SearchBar()),
-        _FilterButton(),
+        Expanded(
+          child: _SearchBar(
+            onSearchChanged: onSearchChanged,
+          ),
+        ),
+        _FilterButton(
+          onFilterChanged: onFilterChanged,
+          onFiltersCleared: onFiltersCleared,
+        ),
       ],
     );
   }
 }
 
 class _FilterButton extends StatefulWidget {
-  const _FilterButton();
+  const _FilterButton({
+    required this.onFilterChanged,
+    required this.onFiltersCleared,
+  });
+
+  final OnFilterChanged onFilterChanged;
+  final VoidCallback onFiltersCleared;
 
   @override
   State<_FilterButton> createState() => _FilterButtonState();
@@ -29,28 +50,6 @@ class _FilterButtonState extends State<_FilterButton> {
   HttpResponseStatus? _status;
 
   @override
-  void initState() {
-    super.initState();
-    NotificationDispatcher.instance
-      ..addObserver(
-        this,
-        name: NotificationName.updateFilters.name,
-        callback: _onFiltersUpdated,
-      )
-      ..addObserver(
-        this,
-        name: NotificationName.clearFilters.name,
-        callback: _onFiltersCleared,
-      );
-  }
-
-  @override
-  void dispose() {
-    NotificationDispatcher.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.sort, color: Colors.grey[600]),
@@ -59,27 +58,34 @@ class _FilterButtonState extends State<_FilterButton> {
         builder: (_) => FilterDialog(
           initialRequestMethod: _method,
           initialResponseStatus: _status,
+          onFilterChanged: _onFiltersUpdated,
+          onFiltersCleared: _onFiltersCleared,
         ),
       ),
     );
   }
 
-  void _onFiltersUpdated(NotificationMessage message) {
-    final method = message.info?[NotificationKey.method.name];
-    final status = message.info?[NotificationKey.method.name];
+  void _onFiltersUpdated(
+    HttpRequestMethod? method,
+    HttpResponseStatus? status,
+  ) {
+    _method = method;
+    _status = status;
 
-    if (method is HttpRequestMethod) _method = method;
-    if (status is HttpResponseStatus) _status = status;
+    widget.onFilterChanged(method, status);
   }
 
-  void _onFiltersCleared(NotificationMessage _) {
-    _method = null;
-    _status = null;
+  void _onFiltersCleared() {
+    widget.onFiltersCleared();
   }
 }
 
 class _SearchBar extends StatefulWidget {
-  const _SearchBar();
+  const _SearchBar({
+    required this.onSearchChanged,
+  });
+
+  final ValueChanged<String> onSearchChanged;
 
   @override
   State<_SearchBar> createState() => _SearchBarState();
@@ -116,12 +122,7 @@ class _SearchBarState extends State<_SearchBar> {
   }
 
   void _onChanged() {
-    NotificationDispatcher.instance.post(
-      name: NotificationName.search.name,
-      info: {
-        NotificationKey.searchTerm.name: _controller.text,
-      },
-    );
+    widget.onSearchChanged(_controller.text);
   }
 
   void _onClear() {
