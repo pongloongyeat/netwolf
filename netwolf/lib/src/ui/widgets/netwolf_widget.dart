@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/enums.dart';
@@ -9,10 +10,13 @@ import 'package:notification_dispatcher/notification_dispatcher.dart';
 class NetwolfWidget extends StatefulWidget {
   const NetwolfWidget({
     super.key,
+    this.enabled = kDebugMode,
     required this.navigatorKey,
     this.tapsToShow = 5,
     required this.child,
   });
+
+  final bool enabled;
 
   final GlobalKey<NavigatorState> navigatorKey;
 
@@ -63,7 +67,8 @@ class _NetwolfWidgetState extends State<NetwolfWidget> {
   }
 
   void _show() {
-    if (!mounted || _shown) return;
+    final enabled = widget.enabled;
+    if (!enabled || !mounted || _shown) return;
 
     final context = widget.navigatorKey.currentContext!;
     _shown = true;

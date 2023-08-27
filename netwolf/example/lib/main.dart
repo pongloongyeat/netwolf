@@ -6,18 +6,31 @@ import 'package:netwolf_dio/netwolf_dio.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NetwolfController.instance.init();
-  final navigatorKey = GlobalKey<NavigatorState>();
 
-  runApp(
-    MaterialApp(
+  runApp(const App());
+}
+
+class App extends StatefulWidget {
+  const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       builder: (context, child) => NetwolfWidget(
-        navigatorKey: navigatorKey,
+        navigatorKey: _navigatorKey,
         child: child ?? Container(),
       ),
-      navigatorKey: navigatorKey,
+      navigatorKey: _navigatorKey,
       home: const HomePage(),
-    ),
-  );
+    );
+  }
 }
 
 class HomePage extends StatelessWidget {
