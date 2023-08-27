@@ -189,9 +189,6 @@ class NetwolfDetailsPage extends StatelessWidget {
   }
 
   String _tryParseBodyAsPrettyJson(String body) {
-    const xmlHeader = '<?xml version="';
-    if (body.trim().startsWith(xmlHeader)) return body;
-
     try {
       return JsonEncoder.withIndent(' ' * 2).convert(jsonDecode(body));
     } catch (e) {
