@@ -180,11 +180,11 @@ class NetwolfDetailsPage extends StatelessWidget {
     );
   }
 
-  String? _tryParseHeadersAsPrettyJson(Map<String, dynamic> headers) {
+  String _tryParseHeadersAsPrettyJson(Map<String, dynamic> headers) {
     try {
       return JsonEncoder.withIndent(' ' * 2).convert(headers);
     } catch (e) {
-      return null;
+      return headers.toString();
     }
   }
 
