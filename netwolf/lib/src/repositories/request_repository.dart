@@ -11,18 +11,24 @@ class RequestRepository {
 
   final Database db;
 
-  Future<Result<List<NetwolfRequest>, Exception>> getRequests() async {
-    final query = await db.query(
-      NetwolfRequest.tableName,
-      columns: [
-        'id',
-        'method',
-        'url',
-        'start_time',
-        'status_code',
-        'end_time',
-      ],
-    );
+  Future<Result<List<NetwolfRequest>, NetwolfException>> getRequests() async {
+    late List<DbObject> query;
+    try {
+      query = await db.query(
+        NetwolfRequest.tableName,
+        columns: [
+          NetwolfRequestDbObjectKeys.id.name,
+          NetwolfRequestDbObjectKeys.method.name,
+          NetwolfRequestDbObjectKeys.url.name,
+          NetwolfRequestDbObjectKeys.startTime.name,
+          NetwolfRequestDbObjectKeys.statusCode.name,
+          NetwolfRequestDbObjectKeys.endTime.name,
+        ],
+      );
+    } catch (e) {
+      log(e.toString());
+      return Result.error(NetwolfDbException(e.toString()));
+    }
 
     try {
       return Result(query.map(NetwolfRequest.fromDbObject).toList());
@@ -32,13 +38,19 @@ class RequestRepository {
     }
   }
 
-  Future<Result<NetwolfRequest, Exception>> getRequestById(Id id) async {
-    final query = await db.query(
-      NetwolfRequest.tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-      limit: 1,
-    );
+  Future<Result<NetwolfRequest, NetwolfException>> getRequestById(Id id) async {
+    late List<DbObject> query;
+    try {
+      query = await db.query(
+        NetwolfRequest.tableName,
+        where: '${NetwolfRequestDbObjectKeys.id.name} = ?',
+        whereArgs: [id],
+        limit: 1,
+      );
+    } catch (e) {
+      log(e.toString());
+      return Result.error(NetwolfDbException(e.toString()));
+    }
 
     if (query.isEmpty) return Result.error(NetwolfRecordNotFoundException());
 
@@ -50,47 +62,77 @@ class RequestRepository {
     }
   }
 
-  Future<Result<NetwolfRequest, Exception>> addRequest(
+  Future<Result<NetwolfRequest, NetwolfException>> addRequest(
     NetwolfRequest request,
   ) async {
-    final id = await db.insert(NetwolfRequest.tableName, request.toDbObject());
-    return Result(request.copyWith(id: id));
-  }
-
-  Future<Result<NetwolfRequest, Exception>> updateRequest(
-    Id id,
-    NetwolfRequest request,
-  ) async {
+    late Id id;
     try {
-      await db.update(
-        NetwolfRequest.tableName,
-        request.toDbObject(),
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-      return Result(request);
+      id = await db.insert(NetwolfRequest.tableName, request.toDbObject());
+      return Result(request.copyWith(id: id));
     } catch (e) {
       log(e.toString());
-      return Result.error(NetwolfRecordNotFoundException());
+      return Result.error(NetwolfDbException(e.toString()));
     }
   }
 
-  Future<Result<void, Exception>> deleteAllRequests() async {
-    await db.delete(NetwolfRequest.tableName);
-    return const Result(null);
+  /// Updates a request in the DB. If [request]'s ID is specified,
+  /// this updates that specific row. Otherwise, this tries to find the
+  /// row where all the columns of this [request] matches and updates
+  /// that row entry.
+  Future<Result<NetwolfRequest, NetwolfException>> updateRequest(
+    NetwolfRequest request,
+    NetwolfRequest updatedRequest,
+  ) async {
+    final requestId = request.id;
+
+    try {
+      if (requestId != null) {
+        await db.update(
+          NetwolfRequest.tableName,
+          updatedRequest.toDbObject(),
+          where: '${NetwolfRequestDbObjectKeys.id.name} = ?',
+          whereArgs: [requestId],
+        );
+      } else {
+        final requestDbObject = request.toDbObject(withId: false);
+        final nonNullKeys = requestDbObject
+          ..removeWhere((key, value) => value == null);
+
+        await db.update(
+          NetwolfRequest.tableName,
+          updatedRequest.toDbObject()..removeWhere((_, value) => value == null),
+          where: nonNullKeys.keys.map((e) => '$e = ?').join(' AND '),
+          whereArgs: nonNullKeys.keys.map((e) => requestDbObject[e]).toList(),
+        );
+      }
+      return Result(request);
+    } catch (e) {
+      log(e.toString());
+      return Result.error(NetwolfDbException(e.toString()));
+    }
   }
 
-  Future<Result<void, Exception>> deleteRequestById(Id id) async {
+  Future<Result<void, NetwolfException>> deleteAllRequests() async {
+    try {
+      await db.delete(NetwolfRequest.tableName);
+      return const Result(null);
+    } catch (e) {
+      log(e.toString());
+      return Result.error(NetwolfDbException(e.toString()));
+    }
+  }
+
+  Future<Result<void, NetwolfException>> deleteRequestById(Id id) async {
     try {
       await db.delete(
         NetwolfRequest.tableName,
-        where: 'id = ?',
+        where: '${NetwolfRequestDbObjectKeys.id.name} = ?',
         whereArgs: [id],
       );
       return const Result(null);
     } catch (e) {
       log(e.toString());
-      return Result.error(NetwolfRecordNotFoundException());
+      return Result.error(NetwolfDbException(e.toString()));
     }
   }
 }

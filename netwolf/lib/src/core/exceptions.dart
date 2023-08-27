@@ -1,5 +1,18 @@
-class NetwolfRecordNotFoundException implements Exception {}
+sealed class NetwolfException implements Exception {}
 
-class NetwolfDecodingException implements Exception {}
+final class NetwolfRecordNotFoundException implements NetwolfException {}
 
-class NetwolfLoggingDisabledException implements Exception {}
+final class NetwolfDecodingException implements NetwolfException {}
+
+final class NetwolfLoggingDisabledException implements NetwolfException {}
+
+final class NetwolfDbException implements NetwolfException {
+  NetwolfDbException(this.message);
+
+  final String message;
+
+  @override
+  String toString() {
+    return message;
+  }
+}
