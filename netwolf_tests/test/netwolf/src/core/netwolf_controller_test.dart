@@ -15,6 +15,14 @@ final class _MockRequestRepository extends Mock implements RequestRepository {}
 
 void main() {
   initMockDb();
+  setUp(
+    () => registerFallbackValue(
+      NetwolfRequest.uri(
+        method: HttpRequestMethod.get,
+        uri: Uri(),
+      ),
+    ),
+  );
 
   group('NetwolfController', () {
     test('has initial logging value of true', () {
@@ -58,7 +66,7 @@ void main() {
         );
 
         expect(
-          await controller.updateRequest(Random().nextInt(100), mockRequest),
+          await controller.completeRequest(mockRequest),
           isA<Result<NetwolfRequest, Exception>>().having(
             (s) => s.error,
             'error',
@@ -82,9 +90,9 @@ void main() {
           .thenAnswer((_) async => Result([mockRequest]));
       when(() => repository.getRequestById(any()))
           .thenAnswer((_) async => Result(mockRequest));
-      when(() => repository.addRequest(mockRequest))
+      when(() => repository.addRequest(any()))
           .thenAnswer((_) async => Result(mockRequest));
-      when(() => repository.updateRequest(any(), mockRequest))
+      when(() => repository.updateRequest(any(), any()))
           .thenAnswer((_) async => Result(mockRequest));
       when(repository.deleteAllRequests)
           .thenAnswer((_) async => const Result(null));
@@ -98,8 +106,8 @@ void main() {
       await controller.addRequest(mockRequest);
       verify(() => repository.addRequest(mockRequest)).called(1);
 
-      await controller.updateRequest(Random().nextInt(100), mockRequest);
-      verify(() => repository.updateRequest(any(), mockRequest)).called(1);
+      await controller.completeRequest(mockRequest);
+      verify(() => repository.updateRequest(any(), any())).called(1);
 
       await controller.clearAll();
       verify(repository.deleteAllRequests).called(1);

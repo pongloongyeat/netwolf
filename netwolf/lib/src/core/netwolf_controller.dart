@@ -87,32 +87,43 @@ abstract class BaseNetwolfController {
   void show();
 
   /// Gets all stored requests.
-  Future<Result<List<NetwolfRequest>, Exception>> getRequests() {
+  Future<Result<List<NetwolfRequest>, NetwolfException>> getRequests() {
     return _repository.getRequests();
   }
 
   /// Gets a specific request.
-  Future<Result<NetwolfRequest, Exception>> getRequestById(Id id) {
+  Future<Result<NetwolfRequest, NetwolfException>> getRequestById(Id id) {
     return _repository.getRequestById(id);
   }
 
   /// Adds a request to Netwolf. Returns the ID of the added request.
-  Future<Result<NetwolfRequest, Exception>> addRequest(
+  Future<Result<NetwolfRequest, NetwolfException>> addRequest(
     NetwolfRequest request,
   ) async {
     if (!logging) return Result.error(NetwolfLoggingDisabledException());
     return _repository.addRequest(request);
   }
 
-  /// Updates an existing request. If the request was not found, a
+  /// Completes an existing request. If the request was not found, a
   /// [NetwolfRecordNotFoundException] will be returned. Otherwise,
-  /// this simply returns the updated response.
-  Future<Result<NetwolfRequest, Exception>> updateRequest(
-    Id id,
-    NetwolfRequest response,
-  ) async {
+  /// this simply returns the updated request.
+  Future<Result<NetwolfRequest, NetwolfException>> completeRequest(
+    NetwolfRequest request, {
+    int? statusCode,
+    DateTime? endTime,
+    Map<String, dynamic>? responseHeaders,
+    String? responseBody,
+  }) async {
     if (!logging) return Result.error(NetwolfLoggingDisabledException());
-    return _repository.updateRequest(id, response);
+    return _repository.updateRequest(
+      request,
+      request.completeRequest(
+        statusCode: statusCode,
+        endTime: endTime,
+        responseHeaders: responseHeaders,
+        responseBody: responseBody,
+      ),
+    );
   }
 
   /// Clears all current responses.

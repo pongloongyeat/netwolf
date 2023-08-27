@@ -59,24 +59,20 @@ void main() {
     test('can update a request', () async {
       final result = await repository.addRequest(mockRequest);
       final data = result.data!;
+      final dbObject = data.toDbObject();
       final updatedData = data.copyWith(
         statusCode: 200,
         endTime: DateTime.now(),
       );
-      final updatedResult =
-          await repository.updateRequest(data.id!, updatedData);
+      final updatedResult = await repository.updateRequest(data, updatedData);
 
       expect(updatedResult.hasError, isFalse);
       expect(updatedResult.data, isNotNull);
-      expect(updatedResult.data!.id, isNotNull);
 
-      final dbObject = updatedResult.data!.toDbObject();
+      final updatedDbObject = updatedResult.data!.toDbObject();
 
       expect(
-        const DeepCollectionEquality().equals(
-          dbObject,
-          updatedData.toDbObject(),
-        ),
+        const DeepCollectionEquality().equals(dbObject, updatedDbObject),
         isTrue,
       );
     });
