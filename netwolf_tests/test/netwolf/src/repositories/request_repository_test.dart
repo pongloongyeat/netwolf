@@ -63,12 +63,10 @@ void main() {
         statusCode: 200,
         endTime: DateTime.now(),
       );
-      final updatedResult =
-          await repository.updateRequest(data.id!, updatedData);
+      final updatedResult = await repository.updateRequest(data, updatedData);
 
       expect(updatedResult.hasError, isFalse);
       expect(updatedResult.data, isNotNull);
-      expect(updatedResult.data!.id, isNotNull);
 
       final dbObject = updatedResult.data!.toDbObject();
 
