@@ -6,11 +6,14 @@ enum HttpRequestMethod {
   head,
   patch,
   post,
-  put;
+  put,
+  unknown;
 
   static HttpRequestMethod parse(String method) {
-    return values
-        .firstWhere((e) => e.name.toLowerCase() == method.toLowerCase());
+    return values.firstWhere(
+      (e) => e.name.toLowerCase() == method.toLowerCase(),
+      orElse: () => HttpRequestMethod.unknown,
+    );
   }
 
   static HttpRequestMethod? tryParse(String? method) {

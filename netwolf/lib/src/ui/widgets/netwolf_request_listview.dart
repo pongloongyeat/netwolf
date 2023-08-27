@@ -214,8 +214,7 @@ class _NetwolfRequestListViewItem extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (statusCode != null)
-                      _StatusChip(statusCode, completed: completed),
+                    _StatusChip(statusCode, completed: completed),
                   ],
                 ),
                 const SizedBox(height: 8),
