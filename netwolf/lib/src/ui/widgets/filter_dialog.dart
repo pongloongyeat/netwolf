@@ -3,17 +3,25 @@ import 'package:netwolf/src/core/constants.dart';
 import 'package:netwolf/src/core/enums.dart';
 import 'package:netwolf/src/core/extensions.dart';
 import 'package:netwolf/src/ui/widgets/base_dialog.dart';
-import 'package:notification_dispatcher/notification_dispatcher.dart';
+
+typedef OnFilterChanged = void Function(
+  HttpRequestMethod?,
+  HttpResponseStatus?,
+);
 
 class FilterDialog extends StatefulWidget {
   const FilterDialog({
     super.key,
     required this.initialRequestMethod,
     required this.initialResponseStatus,
+    required this.onFilterChanged,
+    required this.onFiltersCleared,
   });
 
   final HttpRequestMethod? initialRequestMethod;
   final HttpResponseStatus? initialResponseStatus;
+  final OnFilterChanged onFilterChanged;
+  final VoidCallback onFiltersCleared;
 
   @override
   State<FilterDialog> createState() => _FilterDialogState();
@@ -69,29 +77,16 @@ class _FilterDialogState extends State<FilterDialog> {
 
   void _onRequestMethodSelected(HttpRequestMethod? value) {
     setState(() => _selectedRequestMethod = value);
-    NotificationDispatcher.instance.post(
-      name: NotificationName.updateFilters.name,
-      info: {
-        NotificationKey.method.name: value,
-        NotificationKey.status.name: _selectedResponseStatus,
-      },
-    );
+    widget.onFilterChanged(value, _selectedResponseStatus);
   }
 
   void _onRequestStatusSelected(HttpResponseStatus? value) {
     setState(() => _selectedResponseStatus = value);
-    NotificationDispatcher.instance.post(
-      name: NotificationName.updateFilters.name,
-      info: {
-        NotificationKey.method.name: _selectedRequestMethod,
-        NotificationKey.status.name: value,
-      },
-    );
+    widget.onFilterChanged(_selectedRequestMethod, value);
   }
 
   void _onClearFiltersPressed() {
-    NotificationDispatcher.instance
-        .post(name: NotificationName.clearFilters.name);
+    widget.onFiltersCleared();
     Navigator.of(context).pop();
   }
 }
