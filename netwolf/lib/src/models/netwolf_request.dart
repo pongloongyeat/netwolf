@@ -178,7 +178,7 @@ final class NetwolfRequest {
 
   final Duration? responseTime;
 
-  static String get tableName => 'RESPONSES';
+  static String get tableName => 'REQUESTS';
 
   bool get completed => endTime != null;
 
