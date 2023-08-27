@@ -141,7 +141,7 @@ class NetwolfDetailsPage extends StatelessWidget {
           if (requestBody != null)
             SectionListItem(
               label: 'Request body',
-              content: _tryParseBodyAsPrettyJson(requestBody) ?? requestBody,
+              content: _tryParseBodyAsPrettyJson(requestBody),
             ),
         ],
       ),
@@ -173,26 +173,26 @@ class NetwolfDetailsPage extends StatelessWidget {
           if (responseBody != null)
             SectionListItem(
               label: 'Response body',
-              content: _tryParseBodyAsPrettyJson(responseBody) ?? responseBody,
+              content: _tryParseBodyAsPrettyJson(responseBody),
             ),
         ],
       ),
     );
   }
 
-  String? _tryParseHeadersAsPrettyJson(Map<String, dynamic> headers) {
+  String _tryParseHeadersAsPrettyJson(Map<String, dynamic> headers) {
     try {
       return JsonEncoder.withIndent(' ' * 2).convert(headers);
     } catch (e) {
-      return null;
+      return headers.toString();
     }
   }
 
-  String? _tryParseBodyAsPrettyJson(String body) {
+  String _tryParseBodyAsPrettyJson(String body) {
     try {
       return JsonEncoder.withIndent(' ' * 2).convert(jsonDecode(body));
     } catch (e) {
-      return null;
+      return body;
     }
   }
 }
