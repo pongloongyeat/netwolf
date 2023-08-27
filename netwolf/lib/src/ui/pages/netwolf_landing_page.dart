@@ -7,6 +7,7 @@ import 'package:netwolf/src/ui/widgets/netwolf_app_bar.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_request_listview.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_search_bar.dart';
 import 'package:netwolf/src/ui/widgets/settings_dialog.dart';
+import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class NetwolfLandingPage extends StatefulWidget {
   const NetwolfLandingPage({super.key});
@@ -26,6 +27,17 @@ class _NetwolfLandingPageState extends State<NetwolfLandingPage> {
   void initState() {
     super.initState();
     _getRequests();
+    NotificationDispatcher.instance.addObserver(
+      this,
+      name: NotificationName.refetchRequests.name,
+      callback: (_) => _getRequests(),
+    );
+  }
+
+  @override
+  void dispose() {
+    NotificationDispatcher.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
