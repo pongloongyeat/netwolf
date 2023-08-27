@@ -1,5 +1,15 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:netwolf/netwolf.dart';
+
+String _formatBody(dynamic body) {
+  try {
+    return jsonEncode(body);
+  } catch (_) {
+    return body.toString();
+  }
+}
 
 extension on RequestOptions {
   static const _extraHeaderKey = 'Netwolf-StartTime';
@@ -10,7 +20,7 @@ extension on RequestOptions {
       uri: uri,
       startTime: startTime,
       requestHeaders: headers,
-      requestBody: data?.toString(),
+      requestBody: _formatBody(data),
     );
   }
 
@@ -50,7 +60,7 @@ class NetwolfDioInterceptor extends Interceptor {
         statusCode: response.statusCode,
         endTime: DateTime.now(),
         responseHeaders: response.headers.map,
-        responseBody: response.data?.toString(),
+        responseBody: _formatBody(response.data),
       );
     }
 
