@@ -56,27 +56,6 @@ void main() {
       );
     });
 
-    test('can update a request', () async {
-      final result = await repository.addRequest(mockRequest);
-      final data = result.data!;
-      final dbObject = data.toDbObject();
-      final updatedData = data.copyWith(
-        statusCode: 200,
-        endTime: DateTime.now(),
-      );
-      final updatedResult = await repository.updateRequest(data, updatedData);
-
-      expect(updatedResult.hasError, isFalse);
-      expect(updatedResult.data, isNotNull);
-
-      final updatedDbObject = updatedResult.data!.toDbObject();
-
-      expect(
-        const DeepCollectionEquality().equals(dbObject, updatedDbObject),
-        isTrue,
-      );
-    });
-
     test('can get requests', () async {
       var result = await repository.getRequests();
       var data = result.data;
@@ -111,6 +90,31 @@ void main() {
         const DeepCollectionEquality().equals(
           dbObject,
           mockRequest.toDbObject(),
+        ),
+        isTrue,
+      );
+    });
+
+    test('can update a request with a specific ID', () async {
+      final result = await repository.addRequest(mockRequest);
+      final data = result.data!;
+
+      final updatedData = data.completeRequest(
+        statusCode: 200,
+        endTime: DateTime.now(),
+      );
+      final updatedResult = await repository.updateRequest(
+        data.id!,
+        dbObject: updatedData.toDbObject(),
+      );
+
+      expect(updatedResult.hasError, isFalse);
+
+      final updatedResultInDb = await repository.getRequestById(data.id!);
+      expect(
+        const DeepCollectionEquality().equals(
+          updatedData.toDbObject(),
+          updatedResultInDb.data!.toDbObject(),
         ),
         isTrue,
       );

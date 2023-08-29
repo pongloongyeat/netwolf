@@ -104,11 +104,10 @@ abstract class BaseNetwolfController {
     return _repository.addRequest(request);
   }
 
-  /// Completes an existing request. If the request was not found, a
-  /// [NetwolfRecordNotFoundException] will be returned. Otherwise,
-  /// this simply returns the updated request.
-  Future<Result<NetwolfRequest, NetwolfException>> completeRequest(
-    NetwolfRequest request, {
+  /// Completes an existing request and returns the updated request.
+  /// Returns a [NetwolfLoggingDisabledException] if [logging] is enabled.
+  Future<Result<void, NetwolfException>> completeRequest(
+    Id id, {
     int? statusCode,
     DateTime? endTime,
     Map<String, dynamic>? responseHeaders,
@@ -116,8 +115,8 @@ abstract class BaseNetwolfController {
   }) async {
     if (!logging) return Result.error(NetwolfLoggingDisabledException());
     return _repository.updateRequest(
-      request,
-      request.completeRequest(
+      id,
+      dbObject: NetwolfRequest.partialDbObject(
         statusCode: statusCode,
         endTime: endTime,
         responseHeaders: responseHeaders,
@@ -180,15 +179,15 @@ final class NetwolfController extends BaseNetwolfController {
   }
 
   @override
-  Future<Result<NetwolfRequest, NetwolfException>> completeRequest(
-    NetwolfRequest request, {
+  Future<Result<void, NetwolfException>> completeRequest(
+    Id id, {
     int? statusCode,
     DateTime? endTime,
     Map<String, dynamic>? responseHeaders,
     String? responseBody,
   }) async {
     final result = await super.completeRequest(
-      request,
+      id,
       statusCode: statusCode,
       endTime: endTime,
       responseHeaders: responseHeaders,

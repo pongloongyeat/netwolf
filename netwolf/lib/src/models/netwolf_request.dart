@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:netwolf/src/core/enums.dart';
+import 'package:netwolf/src/core/extensions.dart';
 import 'package:netwolf/src/core/typedefs.dart';
 
 enum NetwolfRequestDbObjectKeys {
@@ -237,5 +238,36 @@ final class NetwolfRequest {
           responseHeaders != null ? jsonEncode(responseHeaders) : null,
       NetwolfRequestDbObjectKeys.responseBody.name: responseBody,
     };
+  }
+
+  static DbObject partialDbObject({
+    Id? id,
+    HttpRequestMethod? method,
+    Uri? uri,
+    DateTime? startTime,
+    Map<String, dynamic>? requestHeaders,
+    String? requestBody,
+    int? statusCode,
+    DateTime? endTime,
+    Map<String, dynamic>? responseHeaders,
+    String? responseBody,
+    bool includeNullValues = false,
+  }) {
+    final dbObject = {
+      NetwolfRequestDbObjectKeys.id.name: id,
+      NetwolfRequestDbObjectKeys.method.name: method?.name,
+      NetwolfRequestDbObjectKeys.url.name: uri?.toString(),
+      NetwolfRequestDbObjectKeys.startTime.name: startTime?.toIso8601String(),
+      NetwolfRequestDbObjectKeys.requestHeaders.name:
+          requestHeaders != null ? jsonEncode(requestHeaders) : null,
+      NetwolfRequestDbObjectKeys.requestBody.name: requestBody,
+      NetwolfRequestDbObjectKeys.statusCode.name: statusCode,
+      NetwolfRequestDbObjectKeys.endTime.name: endTime?.toIso8601String(),
+      NetwolfRequestDbObjectKeys.responseHeaders.name:
+          responseHeaders != null ? jsonEncode(responseHeaders) : null,
+      NetwolfRequestDbObjectKeys.responseBody.name: responseBody,
+    };
+    if (includeNullValues) return dbObject;
+    return dbObject..removeNullValues();
   }
 }

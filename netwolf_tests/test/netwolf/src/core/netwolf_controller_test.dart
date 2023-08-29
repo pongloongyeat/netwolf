@@ -32,15 +32,12 @@ void main() {
 
     test('updates logging getter when calling log-related methods', () {
       final controller = MockNetwolfController();
-
       expect(controller.logging, isTrue);
 
       controller.disableLogging();
-
       expect(controller.logging, isFalse);
 
       controller.enableLogging();
-
       expect(controller.logging, isTrue);
     });
 
@@ -66,7 +63,7 @@ void main() {
         );
 
         expect(
-          await controller.completeRequest(mockRequest),
+          await controller.completeRequest(Random().nextInt(100)),
           isA<Result<NetwolfRequest, Exception>>().having(
             (s) => s.error,
             'error',
@@ -92,8 +89,12 @@ void main() {
           .thenAnswer((_) async => Result(mockRequest));
       when(() => repository.addRequest(any()))
           .thenAnswer((_) async => Result(mockRequest));
-      when(() => repository.updateRequest(any(), any()))
-          .thenAnswer((_) async => Result(mockRequest));
+      when(
+        () => repository.updateRequest(
+          any(),
+          dbObject: any(named: 'dbObject'),
+        ),
+      ).thenAnswer((_) async => const Result(null));
       when(repository.deleteAllRequests)
           .thenAnswer((_) async => const Result(null));
 
@@ -106,8 +107,13 @@ void main() {
       await controller.addRequest(mockRequest);
       verify(() => repository.addRequest(mockRequest)).called(1);
 
-      await controller.completeRequest(mockRequest);
-      verify(() => repository.updateRequest(any(), any())).called(1);
+      await controller.completeRequest(Random().nextInt(100));
+      verify(
+        () => repository.updateRequest(
+          any(),
+          dbObject: any(named: 'dbObject'),
+        ),
+      ).called(1);
 
       await controller.clearAll();
       verify(repository.deleteAllRequests).called(1);
