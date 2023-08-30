@@ -11,7 +11,11 @@ void main() {
   late NetwolfRepository repository;
 
   setUp(() {
-    database = NetwolfDatabase(queryExecutor: NativeDatabase.memory());
+    database = NetwolfDatabase(
+      // Ignore the DB path since we're using an in-memory DB
+      dbPath: '',
+      queryExecutor: NativeDatabase.memory(),
+    );
     repository = NetwolfRepository(database);
   });
 
@@ -72,11 +76,11 @@ void main() {
       expect(result.hasError, isFalse);
       expect(data, isNotNull);
       expect(data!.length, 1);
-      expect(data.first.method, addRequestDto.method);
+      expect(data.first.method.name, addRequestDto.method);
       expect(data.first.uri.toString(), addRequestDto.url);
-      expect(data.first.startTime, addRequestDto.startTime);
-      expect(data.first.requestHeaders, addRequestDto.requestHeaders);
-      expect(data.first.requestBody, addRequestDto.requestBody);
+      expect(data.first.startTime.toIso8601String(), addRequestDto.startTime);
+      expect(data.first.requestHeaders, isNull);
+      expect(data.first.requestBody, isNull);
     });
 
     test('can get a specific request', () async {

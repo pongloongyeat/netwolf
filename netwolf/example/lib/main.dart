@@ -5,6 +5,7 @@ import 'package:netwolf_dio/netwolf_dio.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NetwolfController.init();
 
   runApp(const App());
 }

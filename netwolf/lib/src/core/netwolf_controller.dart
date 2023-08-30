@@ -1,11 +1,18 @@
 import 'package:netwolf/src/core/enums.dart';
 import 'package:netwolf_core/netwolf_core.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 final class NetwolfController extends BaseNetwolfController {
-  NetwolfController._();
+  NetwolfController._(super.dbPath);
 
-  static final instance = NetwolfController._();
+  static late final NetwolfController instance;
+
+  static Future<void> init() async {
+    final dbPath = await getApplicationDocumentsDirectory();
+    instance = NetwolfController._(join(dbPath.path, 'netwolf.db'));
+  }
 
   void show() {
     NotificationDispatcher.instance.post(name: NotificationName.show.name);
