@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:netwolf/src/core/enums.dart';
 import 'package:netwolf/src/ui/widgets/filter_dialog.dart';
 import 'package:netwolf_core/netwolf_core.dart';
 
