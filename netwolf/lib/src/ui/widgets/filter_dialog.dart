@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/constants.dart';
-import 'package:netwolf/src/core/enums.dart';
 import 'package:netwolf/src/core/extensions.dart';
 import 'package:netwolf/src/ui/widgets/base_dialog.dart';
+import 'package:netwolf_core/netwolf_core.dart';
 
 typedef OnFilterChanged = void Function(
   HttpRequestMethod?,

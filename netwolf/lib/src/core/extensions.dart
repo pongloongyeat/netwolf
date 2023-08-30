@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/constants.dart';
-import 'package:netwolf/src/core/enums.dart';
+import 'package:netwolf_core/netwolf_core.dart';
 
 extension StringX on String {
   String toTitleCase() {
@@ -56,11 +56,5 @@ extension ListWidgetExtensions on List<Widget> {
 
     if (applyAfterLastItem) widgets.add(separator);
     return widgets;
-  }
-}
-
-extension MapX<K, V> on Map<K, V> {
-  void removeNullValues() {
-    removeWhere((key, value) => value == null);
   }
 }

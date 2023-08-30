@@ -2,6 +2,7 @@ name: netwolf
 description: Inspired by Netfox on iOS. Netwolf allows for easy debugging of network requests made in your app via the use of interceptors.
 version: 0.3.0
 homepage: https://github.com/pongloongyeat/netwolf/netwolf
+publish_to: none
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -10,9 +11,9 @@ dependencies:
   collection: ^1.17.1
   flutter:
     sdk: flutter
+  netwolf_core:
+    path: ../netwolf_core
   notification_dispatcher: ^0.4.0
-  path: ^1.8.3
-  sqflite: ^2.3.0
 
 dev_dependencies:
   lint: ^2.1.2

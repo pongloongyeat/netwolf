@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/constants.dart';
 import 'package:netwolf/src/core/enums.dart';
 import 'package:netwolf/src/core/netwolf_controller.dart';
-import 'package:netwolf/src/models/netwolf_request.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_app_bar.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_request_listview.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_search_bar.dart';
 import 'package:netwolf/src/ui/widgets/settings_dialog.dart';
+import 'package:netwolf_core/netwolf_core.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 
 class NetwolfLandingPage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _NetwolfLandingPageState extends State<NetwolfLandingPage> {
   HttpRequestMethod? _method;
   HttpResponseStatus? _status;
 
-  List<NetwolfRequest> _requests = [];
+  List<NetwolfRequestData> _requests = [];
 
   @override
   void initState() {
@@ -90,7 +90,7 @@ class _NetwolfLandingPageState extends State<NetwolfLandingPage> {
   }
 
   void _getRequests() {
-    NetwolfController.instance.getRequests().then((value) {
+    NetwolfController.instance.getAllRequests().then((value) {
       _requests = value.data ?? _requests;
       if (mounted) setState(() {});
     });
