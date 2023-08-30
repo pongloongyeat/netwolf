@@ -58,3 +58,9 @@ extension ListWidgetExtensions on List<Widget> {
     return widgets;
   }
 }
+
+extension MapX<K, V> on Map<K, V> {
+  void removeNullValues() {
+    removeWhere((key, value) => value == null);
+  }
+}
