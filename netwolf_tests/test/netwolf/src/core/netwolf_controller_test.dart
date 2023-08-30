@@ -64,7 +64,7 @@ void main() {
 
         expect(
           await controller.completeRequest(Random().nextInt(100)),
-          isA<Result<NetwolfRequest, Exception>>().having(
+          isA<Result<void, Exception>>().having(
             (s) => s.error,
             'error',
             isA<NetwolfLoggingDisabledException>(),
