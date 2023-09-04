@@ -1,6 +1,6 @@
 name: netwolf_app
 description: A new Flutter project.
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+publish_to: none
 version: 1.0.0+1
 
 environment:
@@ -15,6 +15,7 @@ dependencies:
     path: ../
   netwolf_dio:
     path: ../../netwolf_dio
+  sqlite3_flutter_libs: ^0.5.16
 
 dev_dependencies:
   flutter_test:

@@ -1,0 +1,43 @@
+CREATE TABLE netwolf_requests (
+    id INTEGER NOT NULL,
+    method TEXT NOT NULL,
+    url TEXT NOT NULL,
+    start_time TEXT NOT NULL,
+    request_headers TEXT,
+    request_body TEXT,
+
+    status_code INTEGER,
+    end_time TEXT,
+    response_headers TEXT,
+    response_body TEXT,
+
+    PRIMARY KEY(id)
+);
+
+getAllRequests:
+    SELECT id, method, url, start_time, status_code, end_time
+    FROM netwolf_requests;
+
+getRequestById:
+    SELECT * FROM netwolf_requests
+    WHERE id = ?
+    LIMIT 1;
+
+insertRequest:
+    INSERT INTO netwolf_requests (method, url, start_time, request_headers, request_body)
+    VALUES (?, ?, ?, ?, ?);
+
+completeRequest:
+    UPDATE netwolf_requests
+    SET status_code = ?,
+        end_time = ?,
+        response_headers = ?,
+        response_body = ?
+    WHERE id = ?;
+
+deleteRequestById:
+    DELETE FROM netwolf_requests
+    WHERE id = ?;
+
+deleteAllRequests:
+    DELETE FROM netwolf_requests;

@@ -5,7 +5,7 @@ import 'package:netwolf_dio/netwolf_dio.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NetwolfController.instance.init();
+  await NetwolfController.init();
 
   runApp(const App());
 }
@@ -56,7 +56,8 @@ class HomePage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Dio()
-                        ..interceptors.add(NetwolfDioInterceptor())
+                        ..interceptors.add(
+                            NetwolfDioInterceptor(NetwolfController.instance))
                         ..get('https://pokeapi.co/api/v2/pokemon-form/132/');
                     },
                     child: const Text('Test API #1'),
@@ -64,7 +65,8 @@ class HomePage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Dio()
-                        ..interceptors.add(NetwolfDioInterceptor())
+                        ..interceptors.add(
+                            NetwolfDioInterceptor(NetwolfController.instance))
                         ..get('https://api.ipify.org?format=json');
                     },
                     child: const Text('Test API #2'),
@@ -72,7 +74,8 @@ class HomePage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Dio()
-                        ..interceptors.add(NetwolfDioInterceptor())
+                        ..interceptors.add(
+                            NetwolfDioInterceptor(NetwolfController.instance))
                         ..put('https://pokeapi.co/api/v2/pokemon-form/132/');
                     },
                     child: const Text('Test failed API #1'),
@@ -80,7 +83,8 @@ class HomePage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Dio()
-                        ..interceptors.add(NetwolfDioInterceptor())
+                        ..interceptors.add(
+                            NetwolfDioInterceptor(NetwolfController.instance))
                         ..post('https://api.ipify.org?format=json');
                     },
                     child: const Text('Test failed API #2'),

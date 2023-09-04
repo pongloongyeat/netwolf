@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:netwolf/netwolf.dart';
+import 'package:netwolf_core/netwolf_core.dart';
 
 String _formatBody(dynamic body) {
   try {
@@ -13,16 +13,6 @@ String _formatBody(dynamic body) {
 
 extension on RequestOptions {
   static const _extraHeaderKey = 'Netwolf-RequestId';
-
-  NetwolfRequest toNetwolfRequest(DateTime startTime) {
-    return NetwolfRequest.uri(
-      method: HttpRequestMethod.parse(method),
-      uri: uri,
-      startTime: startTime,
-      requestHeaders: headers,
-      requestBody: _formatBody(data),
-    );
-  }
 
   void insertRequestId(Id id) {
     extra.addAll({_extraHeaderKey: id});
@@ -36,15 +26,26 @@ extension on RequestOptions {
 }
 
 class NetwolfDioInterceptor extends Interceptor {
+  const NetwolfDioInterceptor(this.controller);
+
+  final BaseNetwolfController controller;
+
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     final startTime = DateTime.now();
-    final request = options.toNetwolfRequest(startTime);
-    NetwolfController.instance.addRequest(request).then((result) {
-      final requestId = result.data?.id;
-      if (requestId != null) options.insertRequestId(requestId);
-      super.onRequest(options, handler);
-    });
+    final result = await controller.addRequest(
+      method: HttpRequestMethod.parse(options.method),
+      uri: options.uri,
+      startTime: startTime,
+      requestHeaders: options.headers,
+      requestBody: _formatBody(options.data),
+    );
+    final requestId = result.data;
+    if (requestId != null) options.insertRequestId(requestId);
+    super.onRequest(options, handler);
   }
 
   @override
@@ -55,7 +56,7 @@ class NetwolfDioInterceptor extends Interceptor {
     final requestId = response.requestOptions.requestId;
 
     if (requestId != null) {
-      NetwolfController.instance.completeRequest(
+      controller.completeRequest(
         requestId,
         statusCode: response.statusCode,
         endTime: DateTime.now(),
@@ -72,7 +73,7 @@ class NetwolfDioInterceptor extends Interceptor {
     final requestId = err.requestOptions.requestId;
 
     if (requestId != null) {
-      NetwolfController.instance.completeRequest(
+      controller.completeRequest(
         requestId,
         statusCode: err.response?.statusCode,
         endTime: DateTime.now(),

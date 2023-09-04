@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/constants.dart';
 import 'package:netwolf/src/core/extensions.dart';
 import 'package:netwolf/src/core/netwolf_controller.dart';
-import 'package:netwolf/src/core/typedefs.dart';
-import 'package:netwolf/src/models/netwolf_request.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_app_bar.dart';
 import 'package:netwolf/src/ui/widgets/section_list_item.dart';
+import 'package:netwolf_core/netwolf_core.dart';
 
 enum _RequestDetailsTab { info, request, response }
 
@@ -63,7 +62,7 @@ class NetwolfDetailsPage extends StatelessWidget {
 
   Widget _buildBody(
     BuildContext context, {
-    required NetwolfRequest request,
+    required NetwolfRequestData request,
   }) {
     return TabBarView(
       children: _RequestDetailsTab.values
@@ -75,7 +74,7 @@ class NetwolfDetailsPage extends StatelessWidget {
   Widget _buildTab(
     BuildContext context,
     _RequestDetailsTab tab,
-    NetwolfRequest request,
+    NetwolfRequestData request,
   ) {
     switch (tab) {
       case _RequestDetailsTab.info:
@@ -89,7 +88,7 @@ class NetwolfDetailsPage extends StatelessWidget {
 
   Widget _buildInfoTab(
     BuildContext context, {
-    required NetwolfRequest request,
+    required NetwolfRequestData request,
   }) {
     return SingleChildScrollView(
       padding: kDefaultPadding,
@@ -118,7 +117,7 @@ class NetwolfDetailsPage extends StatelessWidget {
 
   Widget _buildRequestTab(
     BuildContext context, {
-    required NetwolfRequest request,
+    required NetwolfRequestData request,
   }) {
     final requestHeaders = request.requestHeaders ?? {};
     final requestBody = request.requestBody;
@@ -150,7 +149,7 @@ class NetwolfDetailsPage extends StatelessWidget {
 
   Widget _buildResponseTab(
     BuildContext context, {
-    required NetwolfRequest request,
+    required NetwolfRequestData request,
   }) {
     final responseHeaders = request.responseHeaders ?? {};
     final responseBody = request.responseBody;

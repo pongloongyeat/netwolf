@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/constants.dart';
 import 'package:netwolf/src/core/enums.dart';
 import 'package:netwolf/src/core/extensions.dart';
-import 'package:netwolf/src/models/netwolf_request.dart';
 import 'package:netwolf/src/ui/pages/netwolf_details_page.dart';
+import 'package:netwolf_core/netwolf_core.dart';
 
 class NetwolfRequestListView extends StatelessWidget {
   const NetwolfRequestListView({
@@ -17,7 +17,7 @@ class NetwolfRequestListView extends StatelessWidget {
   final String searchTerm;
   final HttpRequestMethod? method;
   final HttpResponseStatus? status;
-  final List<NetwolfRequest> requests;
+  final List<NetwolfRequestData> requests;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class NetwolfRequestListView extends StatelessWidget {
     if (status != null) {
       filteredRequests.retainWhere(
         (element) =>
-            HttpResponseStatus.fromResponseCode(element.statusCode) == status,
+            HttpResponseStatus.fromStatusCode(element.statusCode) == status,
       );
     }
 
@@ -92,7 +92,7 @@ class NetwolfRequestListView extends StatelessWidget {
     );
   }
 
-  Widget _buildListing(List<NetwolfRequest> filteredRequests) {
+  Widget _buildListing(List<NetwolfRequestData> filteredRequests) {
     return ListView.separated(
       itemCount: filteredRequests.length,
       itemBuilder: (_, index) => _NetwolfRequestListViewItem(
@@ -106,7 +106,7 @@ class NetwolfRequestListView extends StatelessWidget {
 class _NetwolfRequestListViewItem extends StatelessWidget {
   _NetwolfRequestListViewItem(this.request) : super(key: ValueKey(request.id));
 
-  final NetwolfRequest request;
+  final NetwolfRequestData request;
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +213,7 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final status = HttpResponseStatus.fromResponseCode(statusCode);
+    final status = HttpResponseStatus.fromStatusCode(statusCode);
     final code = statusCode == null ? 'Unknown' : '$statusCode';
 
     return Container(
