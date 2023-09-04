@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart' as drift;
-import 'package:drift/native.dart';
 import 'package:netwolf_core/src/core/enums.dart';
 import 'package:netwolf_core/src/data/database.dart';
 import 'package:netwolf_core/src/data/models/dtos.dart';
@@ -11,11 +10,7 @@ void main() {
   late NetwolfRepository repository;
 
   setUp(() {
-    database = NetwolfDatabase(
-      // Ignore the DB path since we're using an in-memory DB
-      dbPath: '',
-      queryExecutor: NativeDatabase.memory(),
-    );
+    database = NetwolfDatabase.inMemory();
     repository = NetwolfRepository(database);
   });
 

@@ -8,7 +8,13 @@ import 'package:netwolf_core/src/data/models/result.dart';
 import 'package:netwolf_core/src/data/repository.dart';
 
 abstract class BaseNetwolfController {
-  BaseNetwolfController(String dbPath)
+  BaseNetwolfController.inMemory({
+    bool logStatements = false,
+  }) : _repository = NetwolfRepository(
+          NetwolfDatabase.inMemory(logStatements: logStatements),
+        );
+
+  BaseNetwolfController.fromPath(String dbPath)
       : _repository = NetwolfRepository(NetwolfDatabase(dbPath: dbPath));
 
   final NetwolfRepository _repository;

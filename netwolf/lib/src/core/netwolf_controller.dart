@@ -1,17 +1,31 @@
+import 'package:flutter/material.dart';
 import 'package:netwolf/src/core/enums.dart';
 import 'package:netwolf_core/netwolf_core.dart';
 import 'package:notification_dispatcher/notification_dispatcher.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-final class NetwolfController extends BaseNetwolfController {
-  NetwolfController._(super.dbPath);
+class NetwolfController extends BaseNetwolfController {
+  // ignore: use_super_parameters
+  NetwolfController._fromPath(String dbPath) : super.fromPath(dbPath);
+
+  // ignore: use_super_parameters
+  NetwolfController._inMemory({
+    bool logStatements = false,
+  }) : super.inMemory(logStatements: logStatements);
 
   static late final NetwolfController instance;
 
-  static Future<void> init() async {
+  static Future<void> init({
+    @visibleForTesting bool inMemory = false,
+  }) async {
+    if (inMemory) {
+      instance = NetwolfController._inMemory();
+      return;
+    }
+
     final dbPath = await getApplicationDocumentsDirectory();
-    instance = NetwolfController._(join(dbPath.path, 'netwolf.db'));
+    instance = NetwolfController._fromPath(join(dbPath.path, 'netwolf.db'));
   }
 
   void show() {

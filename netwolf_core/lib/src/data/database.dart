@@ -9,8 +9,11 @@ part 'database.g.dart';
 class NetwolfDatabase extends _$NetwolfDatabase {
   NetwolfDatabase({
     required String dbPath,
-    QueryExecutor? queryExecutor,
-  }) : super(queryExecutor ?? _openConnection(dbPath: dbPath));
+  }) : super(_openConnection(dbPath: dbPath));
+
+  NetwolfDatabase.inMemory({
+    bool logStatements = false,
+  }) : super(NativeDatabase.memory(logStatements: logStatements));
 
   @override
   int get schemaVersion => 1;
