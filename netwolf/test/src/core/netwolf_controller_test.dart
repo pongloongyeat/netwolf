@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:netwolf/src/core/netwolf_controller.dart';
 import 'package:netwolf/src/ui/pages/netwolf_landing_page.dart';
 import 'package:netwolf/src/ui/widgets/netwolf_widget.dart';
 
@@ -10,7 +11,10 @@ import '../../widget_tester_helper.dart';
 typedef NavigatorKey = GlobalKey<NavigatorState>;
 
 void main() {
-  setUp(TestWidgetsFlutterBinding.ensureInitialized);
+  setUp(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    await NetwolfController.init(inMemory: true);
+  });
 
   group('NetwolfWidget', () {
     testWidgets('displays when tapped specified number of times',
@@ -33,7 +37,7 @@ void main() {
         await tester.tap(find.byKey(key));
       }
 
-      await tester.pumpAndSettle(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
       expect(find.byType(NetwolfLandingPage), findsOneWidget);
     });
   });
